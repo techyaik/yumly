@@ -1,0 +1,566 @@
+[
+  {
+    "id": "v_42",
+    "title": "Mushroom Do Pyaza",
+    "summary": "A delicious authentic Indian vegetarian recipe of Mushroom Do Pyaza. Made with fresh spices and wholesome ingredients.",
+    "slug": "mushroom_do_pyaza"
+  },
+  {
+    "id": "v_45",
+    "title": "Avial",
+    "summary": "A delicious authentic Indian vegetarian recipe of Avial. Made with fresh spices and wholesome ingredients.",
+    "slug": "avial"
+  },
+  {
+    "id": "v_46",
+    "title": "Poriyal",
+    "summary": "A delicious authentic Indian vegetarian recipe of Poriyal. Made with fresh spices and wholesome ingredients.",
+    "slug": "poriyal"
+  },
+  {
+    "id": "v_47",
+    "title": "Gutthi Vankaya",
+    "summary": "A delicious authentic Indian vegetarian recipe of Gutthi Vankaya. Made with fresh spices and wholesome ingredients.",
+    "slug": "gutthi_vankaya"
+  },
+  {
+    "id": "v_48",
+    "title": "Mirchi Ka Salan",
+    "summary": "A delicious authentic Indian vegetarian recipe of Mirchi Ka Salan. Made with fresh spices and wholesome ingredients.",
+    "slug": "mirchi_ka_salan"
+  },
+  {
+    "id": "v_49",
+    "title": "Dal Fry",
+    "summary": "A delicious authentic Indian vegetarian recipe of Dal Fry. Made with fresh spices and wholesome ingredients.",
+    "slug": "dal_fry"
+  },
+  {
+    "id": "v_50",
+    "title": "Veg Biryani",
+    "summary": "A delicious authentic Indian vegetarian recipe of Veg Biryani. Made with fresh spices and wholesome ingredients.",
+    "slug": "veg_biryani"
+  },
+  {
+    "id": "nv_6",
+    "title": "Prawn Masala",
+    "summary": "A rich and flavorful authentic Indian non-vegetarian recipe of Prawn Masala. Packed with bold spices and traditional technique.",
+    "slug": "prawn_masala"
+  },
+  {
+    "id": "nv_8",
+    "title": "Goan Fish Curry",
+    "summary": "A rich and flavorful authentic Indian non-vegetarian recipe of Goan Fish Curry. Packed with bold spices and traditional technique.",
+    "slug": "goan_fish_curry"
+  },
+  {
+    "id": "nv_11",
+    "title": "Keema Mutter",
+    "summary": "A rich and flavorful authentic Indian non-vegetarian recipe of Keema Mutter. Packed with bold spices and traditional technique.",
+    "slug": "keema_mutter"
+  },
+  {
+    "id": "nv_19",
+    "title": "Prawn Pepper Fry",
+    "summary": "A rich and flavorful authentic Indian non-vegetarian recipe of Prawn Pepper Fry. Packed with bold spices and traditional technique.",
+    "slug": "prawn_pepper_fry"
+  },
+  {
+    "id": "nv_24",
+    "title": "Beef Ularthiyathu",
+    "summary": "A rich and flavorful authentic Indian non-vegetarian recipe of Beef Ularthiyathu. Packed with bold spices and traditional technique.",
+    "slug": "beef_ularthiyathu"
+  },
+  {
+    "id": "nv_27",
+    "title": "Mutton Sukka",
+    "summary": "A rich and flavorful authentic Indian non-vegetarian recipe of Mutton Sukka. Packed with bold spices and traditional technique.",
+    "slug": "mutton_sukka"
+  },
+  {
+    "id": "nv_28",
+    "title": "Fish Molee",
+    "summary": "A rich and flavorful authentic Indian non-vegetarian recipe of Fish Molee. Packed with bold spices and traditional technique.",
+    "slug": "fish_molee"
+  },
+  {
+    "id": "nv_31",
+    "title": "Laal Maas",
+    "summary": "A rich and flavorful authentic Indian non-vegetarian recipe of Laal Maas. Packed with bold spices and traditional technique.",
+    "slug": "laal_maas"
+  },
+  {
+    "id": "nv_32",
+    "title": "Kosha Mangsho",
+    "summary": "A rich and flavorful authentic Indian non-vegetarian recipe of Kosha Mangsho. Packed with bold spices and traditional technique.",
+    "slug": "kosha_mangsho"
+  },
+  {
+    "id": "nv_34",
+    "title": "Mutton Nihari",
+    "summary": "A rich and flavorful authentic Indian non-vegetarian recipe of Mutton Nihari. Packed with bold spices and traditional technique.",
+    "slug": "mutton_nihari"
+  },
+  {
+    "id": "nv_35",
+    "title": "Prawn Balchao",
+    "summary": "A rich and flavorful authentic Indian non-vegetarian recipe of Prawn Balchao. Packed with bold spices and traditional technique.",
+    "slug": "prawn_balchao"
+  },
+  {
+    "id": "nv_38",
+    "title": "Mutton Pepper Fry",
+    "summary": "A rich and flavorful authentic Indian non-vegetarian recipe of Mutton Pepper Fry. Packed with bold spices and traditional technique.",
+    "slug": "mutton_pepper_fry"
+  },
+  {
+    "id": "nv_42",
+    "title": "Egg Roast",
+    "summary": "A rich and flavorful authentic Indian non-vegetarian recipe of Egg Roast. Packed with bold spices and traditional technique.",
+    "slug": "egg_roast"
+  },
+  {
+    "id": "nv_43",
+    "title": "Meen Moilee",
+    "summary": "A rich and flavorful authentic Indian non-vegetarian recipe of Meen Moilee. Packed with bold spices and traditional technique.",
+    "slug": "meen_moilee"
+  },
+  {
+    "id": "nv_44",
+    "title": "Prawn Thokku",
+    "summary": "A rich and flavorful authentic Indian non-vegetarian recipe of Prawn Thokku. Packed with bold spices and traditional technique.",
+    "slug": "prawn_thokku"
+  },
+  {
+    "id": "nv_46",
+    "title": "Mutton Handi",
+    "summary": "A rich and flavorful authentic Indian non-vegetarian recipe of Mutton Handi. Packed with bold spices and traditional technique.",
+    "slug": "mutton_handi"
+  },
+  {
+    "id": "nv_48",
+    "title": "Mutton Bhuna",
+    "summary": "A rich and flavorful authentic Indian non-vegetarian recipe of Mutton Bhuna. Packed with bold spices and traditional technique.",
+    "slug": "mutton_bhuna"
+  },
+  {
+    "id": "nv_49",
+    "title": "Fish Fry",
+    "summary": "A rich and flavorful authentic Indian non-vegetarian recipe of Fish Fry. Packed with bold spices and traditional technique.",
+    "slug": "fish_fry"
+  },
+  {
+    "id": "br_19",
+    "title": "Ven Pongal",
+    "summary": "Hearty rice and lentil porridge seasoned with black pepper, ginger, and cumin.",
+    "slug": "ven_pongal"
+  },
+  {
+    "id": "br_20",
+    "title": "Pesharattu",
+    "summary": "Unique Andhra style dosa made from green gram batter, typically served with ginger chutney.",
+    "slug": "pesharattu"
+  },
+  {
+    "id": "br_21",
+    "title": "Lemon Rice (Breakfast Style)",
+    "summary": "Fragrant and tangy rice cooked with fresh lemon juice and crunchy peanuts.",
+    "slug": "lemon_rice_breakfast_style"
+  },
+  {
+    "id": "br_22",
+    "title": "Jadoh (Meghalaya Style)",
+    "summary": "A flavorful and hearty Khasi dish made with red rice, pork, and aromatic local spices.",
+    "slug": "jadoh_meghalaya_style"
+  },
+  {
+    "id": "br_23",
+    "title": "Thukpa (Tibetan Noodle Soup)",
+    "summary": "A warming and nutritious noodle soup popular in North East India, loaded with vegetables.",
+    "slug": "thukpa_tibetan_noodle_soup"
+  },
+  {
+    "id": "br_24",
+    "title": "Koldil with Egg (Banana Flower)",
+    "summary": "Unique Assamese breakfast dish made with banana flower and scrambled eggs.",
+    "slug": "koldil_with_egg_banana_flower"
+  },
+  {
+    "id": "br_25",
+    "title": "Pitha (Assamese Rice Cake)",
+    "summary": "Traditional steamed or fried rice pancakes made during festivals, enjoyed as breakfast.",
+    "slug": "pitha_assamese_rice_cake"
+  },
+  {
+    "id": "br_26",
+    "title": "Smoked Pork with Bamboo Shoot",
+    "summary": "A fiery and aromatic North Eastern breakfast staple with strong tribal flavors.",
+    "slug": "smoked_pork_with_bamboo_shoot"
+  },
+  {
+    "id": "br_27",
+    "title": "Full English Breakfast",
+    "summary": "The ultimate hearty morning platter featuring eggs, sausages, bacon, beans, and more.",
+    "slug": "full_english_breakfast"
+  },
+  {
+    "id": "br_28",
+    "title": "French Croissants",
+    "summary": "Buttery, flaky, and golden-brown pastries that are a staple of French breakfast.",
+    "slug": "french_croissants"
+  },
+  {
+    "id": "br_29",
+    "title": "Belgian Waffles",
+    "summary": "Light and airy waffles with deep pockets, perfect for holding maple syrup and fruit.",
+    "slug": "belgian_waffles"
+  },
+  {
+    "id": "br_30",
+    "title": "American Buttermilk Pancakes",
+    "summary": "Fluffy, thick pancakes served in a stack with butter and maple syrup.",
+    "slug": "american_buttermilk_pancakes"
+  },
+  {
+    "id": "br_31",
+    "title": "Mexican Chilaquiles",
+    "summary": "A traditional Mexican breakfast of fried corn tortillas simmered in spicy salsa.",
+    "slug": "mexican_chilaquiles"
+  },
+  {
+    "id": "br_32",
+    "title": "Israeli Shakshuka",
+    "summary": "Eggs poached in a vibrant and spicy tomato and bell pepper sauce.",
+    "slug": "israeli_shakshuka"
+  },
+  {
+    "id": "br_33",
+    "title": "Turkish Menemen",
+    "summary": "A scramble of eggs, tomatoes, green peppers, and spices, served with crusty bread.",
+    "slug": "turkish_menemen"
+  },
+  {
+    "id": "br_34",
+    "title": "Japanese Miso Breakfast",
+    "summary": "A traditional Japanese morning meal featuring miso soup, rice, and grilled fish.",
+    "slug": "japanese_miso_breakfast"
+  },
+  {
+    "id": "br_35",
+    "title": "Chinese Congee",
+    "summary": "Soothing rice porridge commonly eaten for breakfast in China, often with savory toppings.",
+    "slug": "chinese_congee"
+  },
+  {
+    "id": "br_36",
+    "title": "Vietnamese Banh Mi (Breakfast)",
+    "summary": "A crusty baguette filled with fried eggs, pâté, and pickled vegetables.",
+    "slug": "vietnamese_banh_mi_breakfast"
+  },
+  {
+    "id": "br_37",
+    "title": "Brazilian Pão de Queijo",
+    "summary": "Addictive chewy cheese bread made with tapioca flour, a South American favorite.",
+    "slug": "brazilian_po_de_queijo"
+  },
+  {
+    "id": "br_38",
+    "title": "Gallo Pinto",
+    "summary": "Costa Rican rice and beans breakfast, typically served with eggs and plantains.",
+    "slug": "gallo_pinto"
+  },
+  {
+    "id": "br_39",
+    "title": "Philippine Tapsilog",
+    "summary": "A filling meal of cured beef (Tapa), garlic rice (Sinangag), and a fried egg (Itlog).",
+    "slug": "philippine_tapsilog"
+  },
+  {
+    "id": "br_40",
+    "title": "Avocado Toast",
+    "summary": "Modern classic Australian-style breakfast: creamy avocado on sourdough with a hint of lemon.",
+    "slug": "avocado_toast"
+  },
+  {
+    "id": "br_41",
+    "title": "Swedish Pannkakor",
+    "summary": "Thin, crepe-like Swedish pancakes served with jam and whipped cream.",
+    "slug": "swedish_pannkakor"
+  },
+  {
+    "id": "br_42",
+    "title": "Moroccan Baghrir",
+    "summary": "Unique semolina pancakes with a distinctive honeycomb-like texture, served with honey and butter.",
+    "slug": "moroccan_baghrir"
+  },
+  {
+    "id": "br_43",
+    "title": "Nigerian Akara",
+    "summary": "Savory fried bean cakes made from black-eyed peas, a popular protein-rich breakfast snack.",
+    "slug": "nigerian_akara"
+  },
+  {
+    "id": "br_44",
+    "title": "Russian Syrniki",
+    "summary": "Fried cheese pancakes made from farmer's cheese or ricotta, served with sour cream.",
+    "slug": "russian_syrniki"
+  },
+  {
+    "id": "br_45",
+    "title": "Swiss Bircher Muesli",
+    "summary": "The original overnight oats, soaked with shredded apple, nuts, and yogurt.",
+    "slug": "swiss_bircher_muesli"
+  },
+  {
+    "id": "br_46",
+    "title": "Greek Yogurt with Honey",
+    "summary": "A simple and healthy Mediterranean breakfast of thick yogurt, walnuts, and honey.",
+    "slug": "greek_yogurt_with_honey"
+  },
+  {
+    "id": "br_47",
+    "title": "Portuguese Egg Tarts",
+    "summary": "Pastéis de Nata—creamy custard-filled tarts with a crisp, flaky pastry shell.",
+    "slug": "portuguese_egg_tarts"
+  },
+  {
+    "id": "br_48",
+    "title": "Italian Breakfast",
+    "summary": "A typical 'Colazione' comprising a sweet Cornetto (pastry) and a rich Cappuccino.",
+    "slug": "italian_breakfast"
+  },
+  {
+    "id": "br_49",
+    "title": "Spanish Churros",
+    "summary": "Crispy fried dough sticks served with a cup of thick, rich melting chocolate.",
+    "slug": "spanish_churros"
+  },
+  {
+    "id": "br_50",
+    "title": "Jamaican Ackee and Saltfish",
+    "summary": "The national dish of Jamaica: sautéed saltfish with ackee fruit, peppers, and onions.",
+    "slug": "jamaican_ackee_and_saltfish"
+  },
+  {
+    "id": "sn_4",
+    "title": "Dahi Papri Chaat",
+    "summary": "Crispy papris loaded with yogurt, chutneys, and spices — a classic Indian street chaat.",
+    "slug": "dahi_papri_chaat"
+  },
+  {
+    "id": "sn_5",
+    "title": "Spring Rolls",
+    "summary": "Crispy rolls stuffed with stir-fried vegetables and glass noodles, served with sweet chilli sauce.",
+    "slug": "spring_rolls"
+  },
+  {
+    "id": "sn_6",
+    "title": "Nachos with Salsa",
+    "summary": "Crispy tortilla chips topped with melted cheese, fresh salsa, jalapeños, and sour cream.",
+    "slug": "nachos_with_salsa"
+  },
+  {
+    "id": "sn_7",
+    "title": "Bruschetta",
+    "summary": "Toasted Italian bread rubbed with garlic and topped with fresh tomatoes, basil, and olive oil.",
+    "slug": "bruschetta"
+  },
+  {
+    "id": "sn_9",
+    "title": "Cheese Garlic Bread",
+    "summary": "Thick slices of bread loaded with garlic herb butter and melted mozzarella, baked until golden.",
+    "slug": "cheese_garlic_bread"
+  },
+  {
+    "id": "ds_2",
+    "title": "Gulab Jamun",
+    "summary": "Soft milk-solid dumplings soaked in fragrant rose and cardamom sugar syrup — India's favourite sweet.",
+    "slug": "gulab_jamun"
+  },
+  {
+    "id": "ds_3",
+    "title": "Tiramisu",
+    "summary": "Classic Italian espresso-soaked ladyfinger dessert with silky mascarpone cream and cocoa dusting.",
+    "slug": "tiramisu"
+  },
+  {
+    "id": "ds_4",
+    "title": "Chocolate Lava Cake",
+    "summary": "Warm individual chocolate cakes with a gooey molten chocolate center — an indulgent showstopper.",
+    "slug": "chocolate_lava_cake"
+  },
+  {
+    "id": "ds_5",
+    "title": "Rasmalai",
+    "summary": "Delicate cottage cheese dumplings served floating in sweet saffron-cardamom milk.",
+    "slug": "rasmalai"
+  },
+  {
+    "id": "ds_6",
+    "title": "Crème Brûlée",
+    "summary": "Silky French vanilla custard with a crisp caramelized sugar crust that cracks with a spoon.",
+    "slug": "crme_brle"
+  },
+  {
+    "id": "ds_7",
+    "title": "Gajar Ka Halwa",
+    "summary": "Luscious Indian carrot pudding slow-cooked in milk, ghee, and sugar, garnished with nuts.",
+    "slug": "gajar_ka_halwa"
+  },
+  {
+    "id": "ds_8",
+    "title": "Baklava",
+    "summary": "Layers of flaky phyllo pastry filled with chopped nuts and honey syrup — a Middle Eastern luxury.",
+    "slug": "baklava"
+  },
+  {
+    "id": "ds_9",
+    "title": "Mango Kulfi",
+    "summary": "Traditional Indian ice cream with intense mango flavor — dense, creamy and refreshing.",
+    "slug": "mango_kulfi"
+  },
+  {
+    "id": "ds_10",
+    "title": "New York Cheesecake",
+    "summary": "Dense and rich baked cheesecake on a buttery graham cracker crust — the ultimate American dessert.",
+    "slug": "new_york_cheesecake"
+  },
+  {
+    "id": "it_3",
+    "title": "Lasagne al Forno",
+    "summary": "Baked pasta layers with rich Bolognese meat sauce, béchamel, and melted mozzarella.",
+    "slug": "lasagne_al_forno"
+  },
+  {
+    "id": "it_4",
+    "title": "Risotto alla Milanese",
+    "summary": "Creamy saffron-infused Arborio rice cooked slowly with white wine and Parmesan — a Milanese classic.",
+    "slug": "risotto_alla_milanese"
+  },
+  {
+    "id": "it_5",
+    "title": "Fettuccine Alfredo",
+    "summary": "Silky pasta tossed in an ultra-rich buttery Parmesan sauce — simple but decadent.",
+    "slug": "fettuccine_alfredo"
+  },
+  {
+    "id": "it_6",
+    "title": "Osso Buco",
+    "summary": "Slow-braised veal shanks in white wine and vegetables, topped with citrus gremolata.",
+    "slug": "osso_buco"
+  },
+  {
+    "id": "it_7",
+    "title": "Penne Arrabbiata",
+    "summary": "Fiery pasta in an angry tomato sauce with garlic and red chilli flakes.",
+    "slug": "penne_arrabbiata"
+  },
+  {
+    "id": "it_9",
+    "title": "Gnocchi al Pomodoro",
+    "summary": "Pillowy potato dumplings in a fresh tomato basil sauce — the most comforting Italian pasta alternative.",
+    "slug": "gnocchi_al_pomodoro"
+  },
+  {
+    "id": "it_10",
+    "title": "Cacio e Pepe",
+    "summary": "Rome's legendary three-ingredient pasta: spaghetti, Pecorino cheese, and an extravagant amount of black pepper.",
+    "slug": "cacio_e_pepe"
+  },
+  {
+    "id": "mx_2",
+    "title": "Beef Tacos",
+    "summary": "Sizzling seasoned ground beef in corn tortillas with salsa, cheese, and sour cream.",
+    "slug": "beef_tacos"
+  },
+  {
+    "id": "mx_3",
+    "title": "Guacamole",
+    "summary": "Chunky fresh avocado dip with lime, coriander, and jalapeño — great with tortilla chips.",
+    "slug": "guacamole"
+  },
+  {
+    "id": "mx_4",
+    "title": "Enchiladas Verdes",
+    "summary": "Corn tortillas rolled with chicken, smothered in green tomatillo salsa and melted cheese.",
+    "slug": "enchiladas_verdes"
+  },
+  {
+    "id": "mx_5",
+    "title": "Quesadilla",
+    "summary": "Crispy flour tortilla filled with melted cheese and peppers, cut into wedges.",
+    "slug": "quesadilla"
+  },
+  {
+    "id": "mx_6",
+    "title": "Pozole Rojo",
+    "summary": "Hearty Mexican hominy soup with slow-cooked pork in a rich red chile broth.",
+    "slug": "pozole_rojo"
+  },
+  {
+    "id": "mx_7",
+    "title": "Tamales",
+    "summary": "Masa dough steamed in corn husks with a filling of pork, cheese, or peppers.",
+    "slug": "tamales"
+  },
+  {
+    "id": "mx_8",
+    "title": "Chiles Rellenos",
+    "summary": "Roasted poblano peppers stuffed with cheese, dipped in egg batter and lightly fried.",
+    "slug": "chiles_rellenos"
+  },
+  {
+    "id": "mx_9",
+    "title": "Huevos Rancheros",
+    "summary": "Eggs fried on corn tortillas and covered with a zesty tomato-chilli ranchero sauce.",
+    "slug": "huevos_rancheros"
+  },
+  {
+    "id": "mx_10",
+    "title": "Mole Poblano",
+    "summary": "The king of Mexican sauces — over 20 ingredients including chocolate and chillies over turkey.",
+    "slug": "mole_poblano"
+  },
+  {
+    "id": "ch_3",
+    "title": "Dim Sum (Har Gow)",
+    "summary": "Delicate steamed prawn dumplings with thin translucent wrappers — a Cantonese tea house classic.",
+    "slug": "dim_sum_har_gow"
+  },
+  {
+    "id": "ch_4",
+    "title": "Mapo Tofu",
+    "summary": "Silken tofu in a fiery Sichuan broth of black bean paste, minced pork and numbing peppercorns.",
+    "slug": "mapo_tofu"
+  },
+  {
+    "id": "ch_5",
+    "title": "Peking Duck",
+    "summary": "Famous roasted duck with lacquered crispy skin served with pancakes, hoisin and spring onion.",
+    "slug": "peking_duck"
+  },
+  {
+    "id": "ch_6",
+    "title": "Egg Fried Rice",
+    "summary": "Classic Chinese wok-fried rice with scrambled eggs, soy sauce, and spring onions.",
+    "slug": "egg_fried_rice"
+  },
+  {
+    "id": "ch_7",
+    "title": "Sweet & Sour Pork",
+    "summary": "Crispy battered pork pieces in a vibrant tangy sauce with bell peppers and pineapple.",
+    "slug": "sweet_sour_pork"
+  },
+  {
+    "id": "ch_8",
+    "title": "Hot and Sour Soup",
+    "summary": "Tangy, spicy and deeply satisfying Chinese soup with tofu, wood ear mushrooms and egg ribbons.",
+    "slug": "hot_and_sour_soup"
+  },
+  {
+    "id": "ch_10",
+    "title": "Dan Dan Noodles",
+    "summary": "Sichuan street noodles with a rich sesame-chilli sauce, minced pork and preserved vegetables.",
+    "slug": "dan_dan_noodles"
+  }
+]
