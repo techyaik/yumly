@@ -37,6 +37,7 @@ export default function RecipeDetailScreen() {
 
   const [modalVisible, setModalVisible] = useState(false);
   const [servings, setServings] = useState(recipe?.metadata.servings || 4);
+  const [instructionsExpanded, setInstructionsExpanded] = useState(false);
 
   if (!recipe) {
     return (
@@ -144,15 +145,25 @@ export default function RecipeDetailScreen() {
 
           {/* Instructions Section */}
           <View style={styles.instructionsContainer}>
-            <View style={styles.instructionsHeader}>
-              <Text style={styles.sectionTitle}>Instructions</Text>
+            <Pressable
+              style={styles.instructionsHeader}
+              onPress={() => setInstructionsExpanded(!instructionsExpanded)}
+            >
+              <View style={styles.instructionsHeaderLeft}>
+                <Text style={styles.sectionTitle}>Instructions</Text>
+                <View style={styles.stepCountBadge}>
+                  <Text style={styles.stepCountText}>
+                    {recipe.instructions.length} steps
+                  </Text>
+                </View>
+              </View>
               <Ionicons
-                name="chevron-down"
+                name={instructionsExpanded ? "chevron-up" : "chevron-down"}
                 size={20}
                 color={COLORS.textLight}
               />
-            </View>
-            {recipe.instructions.map((step) => (
+            </Pressable>
+            {instructionsExpanded && recipe.instructions.map((step) => (
               <InstructionStep
                 key={step.step}
                 step={step.step}
@@ -336,7 +347,23 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: SPACING.m,
+    paddingVertical: SPACING.s,
+  },
+  instructionsHeaderLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: SPACING.s,
+  },
+  stepCountBadge: {
+    backgroundColor: COLORS.primaryLight,
+    paddingHorizontal: SPACING.s,
+    paddingVertical: 2,
+    borderRadius: RADIUS.full,
+  },
+  stepCountText: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: COLORS.primary,
   },
   sectionTitle: {
     fontSize: 20,

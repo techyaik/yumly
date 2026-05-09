@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { 
   FlatList,
+  Image,
   StyleSheet, 
   Text, 
   View, 
@@ -12,8 +13,8 @@ import SearchBar from "../../src/components/recipe/SearchBar";
 import RecipeCard from "../../src/components/recipe/RecipeCard";
 import { Recipe } from "../../src/types";
 import recipesData from "../../src/data/recipes.json";
-import { Ionicons } from "@expo/vector-icons";
 import CategoryBar from "../../src/components/recipe/CategoryBar";
+import { Ionicons } from "@expo/vector-icons";
 
 const recipes = recipesData as Recipe[];
 
@@ -44,8 +45,11 @@ export default function HomeScreen() {
       <View style={styles.header}>
         <View style={styles.headerTitleRow}>
           <View style={styles.logoContainer}>
-            <Ionicons name="restaurant" size={24} color={COLORS.primary} />
-            <Text style={styles.logoText}>yumly</Text>
+            <Image
+              source={require("../../assets/images/logo.png")}
+              style={styles.logoImage}
+              resizeMode="contain"
+            />
           </View>
           <View style={styles.headerRight} />
         </View>
@@ -123,14 +127,12 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.l,
   },
   logoContainer: {
-    flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
   },
-  logoText: {
-    fontSize: 22,
-    fontWeight: "bold",
-    color: COLORS.text,
-    marginLeft: SPACING.s,
+  logoImage: {
+    width: 100,
+    height: 30,
   },
   headerRight: {
     flexDirection: "row",

@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <!-- Background circle -->
+  <rect width="512" height="512" rx="112" fill="#FF6B35"/>
+
+  <!-- Decorative ring -->
+  <circle cx="256" cy="256" r="180" stroke="white" stroke-width="8" opacity="0.15" fill="none"/>
+
+  <!-- Plate -->
+  <ellipse cx="256" cy="290" rx="130" ry="40" fill="white" opacity="0.95"/>
+  <ellipse cx="256" cy="290" rx="105" ry="28" fill="#FF6B35" opacity="0.1"/>
+  <ellipse cx="256" cy="290" rx="105" ry="28" stroke="white" stroke-width="3" fill="none" opacity="0.5"/>
+
+  <!-- Fork (left) -->
+  <g transform="translate(256, 140)">
+    <!-- Handle -->
+    <rect x="-6" y="30" width="12" height="90" rx="6" fill="white"/>
+    <!-- Neck -->
+    <path d="M-6 30 L-6 20 C-6 14 -2 10 2 10 L2 30 Z" fill="white"/>
+    <path d="M6 30 L6 20 C6 14 2 10 -2 10 L-2 30 Z" fill="white"/>
+    <!-- Prongs -->
+    <rect x="-20" y="0" width="8" height="28" rx="4" fill="white"/>
+    <rect x="-6" y="0" width="8" height="28" rx="4" fill="white"/>
+    <rect x="8" y="0" width="8" height="28" rx="4" fill="white"/>
+    <rect x="22" y="0" width="8" height="28" rx="4" fill="white"/>
+    <!-- Center line to cover gap -->
+    <rect x="-2" y="8" width="4" height="14" rx="2" fill="white" opacity="0.3"/>
+  </g>
+
+  <!-- Steam wisps -->
+  <g opacity="0.3" stroke="white" stroke-width="4" stroke-linecap="round" fill="none">
+    <path d="M210 195 C205 180 215 165 210 150">
+      <animate attributeName="d" values="M210 195 C205 180 215 165 210 150;M210 195 C215 180 205 165 210 150;M210 195 C205 180 215 165 210 150" dur="3s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.3;0.1;0.3" dur="3s" repeatCount="indefinite"/>
+    </path>
+    <path d="M256 185 C251 170 261 155 256 140">
+      <animate attributeName="d" values="M256 185 C251 170 261 155 256 140;M256 185 C261 170 251 155 256 140;M256 185 C251 170 261 155 256 140" dur="2.5s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.2;0.35;0.2" dur="2.5s" repeatCount="indefinite"/>
+    </path>
+    <path d="M302 195 C297 180 307 165 302 150">
+      <animate attributeName="d" values="M302 195 C297 180 307 165 302 150;M302 195 C307 180 297 165 302 150;M302 195 C297 180 307 165 302 150" dur="3.5s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.25;0.1;0.25" dur="3.5s" repeatCount="indefinite"/>
+    </path>
+  </g>
+
+  <!-- Bottom label area hint -->
+  <rect x="156" y="395" width="200" height="6" rx="3" fill="white" opacity="0.2"/>
+
+  <!-- Fork glow/shadow -->
+  <g filter="url(#shadow)" opacity="0.15">
+    <rect x="-4" y="30" width="8" height="90" rx="4" fill="black"/>
+  </g>
+
+  <defs>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+</svg>
