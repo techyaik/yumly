@@ -16,8 +16,8 @@ export interface Recipe {
   summary: string;
   isVeg: boolean;
   images: {
-    thumbnail: any;
-    hero: any;
+    thumbnail: string;
+    hero: string;
   };
   metadata: {
     prepTimeMinutes: number;
