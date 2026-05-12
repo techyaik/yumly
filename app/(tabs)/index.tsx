@@ -5,16 +5,20 @@ import {
   StyleSheet, 
   Text, 
   View, 
-  StatusBar
+  StatusBar,
+  TouchableOpacity
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS, SPACING } from "../../src/constants/theme";
 import SearchBar from "../../src/components/recipe/SearchBar";
 import RecipeCard from "../../src/components/recipe/RecipeCard";
+import CategoryBar from "../../src/components/recipe/CategoryBar";
 import { Recipe } from "../../src/types";
 import recipesData from "../../src/data/recipes.json";
-import CategoryBar from "../../src/components/recipe/CategoryBar";
 import { Ionicons } from "@expo/vector-icons";
+import { useUser } from "../../src/context/UserContext";
+import EmptyState from "../../src/components/common/EmptyState";
+import { useDebounce } from "../../src/hooks/useDebounce";
 
 const recipes = recipesData as Recipe[];
 
@@ -30,11 +34,13 @@ const CATEGORIES = [
 ];
 
 export default function HomeScreen() {
+  const { name } = useUser();
   const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const [selectedCategory, setSelectedCategory] = useState("All");
 
   const filteredRecipes = React.useMemo(() => {
-    const query = searchQuery.trim().toLowerCase();
+    const query = debouncedSearchQuery.trim().toLowerCase();
     const queryTerms = query.split(/\s+/).filter(term => term.length > 0);
 
     return recipes.filter((recipe) => {
@@ -49,7 +55,7 @@ export default function HomeScreen() {
       // Check if all search terms appear in the title or category
       return queryTerms.every(term => title.includes(term) || category.includes(term));
     });
-  }, [searchQuery, selectedCategory]);
+  }, [debouncedSearchQuery, selectedCategory]);
 
   const renderHeader = () => (
     <View style={styles.headerContent}>
@@ -63,11 +69,15 @@ export default function HomeScreen() {
               resizeMode="contain"
             />
           </View>
-          <View style={styles.headerRight} />
+          <TouchableOpacity style={styles.profileBtn}>
+             <Text style={styles.profileEmoji}>👨‍🍳</Text>
+          </TouchableOpacity>
         </View>
         
-        <Text style={styles.greeting}>Discover Your Next</Text>
-        <Text style={styles.subGreeting}>Favorite Recipe</Text>
+        <View style={styles.greetingSection}>
+          <Text style={styles.greeting}>Hello, {name || "Chef"}!</Text>
+          <Text style={styles.subGreeting}>Discover Your Next{"\n"}Favorite Recipe</Text>
+        </View>
       </View>
 
       {/* Search Bar */}
@@ -83,10 +93,11 @@ export default function HomeScreen() {
   );
 
   const renderEmpty = () => (
-    <View style={styles.emptyContainer}>
-      <Ionicons name="search-outline" size={50} color={COLORS.textLight} style={{ opacity: 0.3 }} />
-      <Text style={styles.emptyText}>No recipes found in this category.</Text>
-    </View>
+    <EmptyState 
+      icon="search-outline"
+      title="No Recipes Found"
+      description={`We couldn't find any recipes matching "${searchQuery}" in ${selectedCategory === "All" ? "any category" : selectedCategory}.`}
+    />
   );
 
   return (
@@ -151,15 +162,33 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
+  greetingSection: {
+    marginTop: SPACING.s,
+  },
   greeting: {
-    fontSize: 28,
+    fontSize: 16,
     fontWeight: "600",
-    color: COLORS.text,
+    color: COLORS.primary,
+    marginBottom: 4,
   },
   subGreeting: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: "bold",
     color: COLORS.text,
+    lineHeight: 38,
+  },
+  profileBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: COLORS.bg3,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  profileEmoji: {
+    fontSize: 20,
   },
   grid: {
     flexDirection: "row",

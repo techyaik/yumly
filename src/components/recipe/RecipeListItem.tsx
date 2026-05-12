@@ -10,13 +10,13 @@ import { useFavorites } from "../../context/FavoritesContext";
 import * as Haptics from "expo-haptics";
 import { RecipeSummary } from "./RecipeCard";
 
-export default function RecipeListItem({
+const RecipeListItem = React.memo(({
   recipe,
   index,
 }: {
   recipe: RecipeSummary;
   index: number;
-}) {
+}) => {
   const { toggleFavorite, isFavorite } = useFavorites();
   const favorited = isFavorite(recipe.id);
 
@@ -73,7 +73,11 @@ export default function RecipeListItem({
       </Pressable>
     </Link>
   );
-}
+});
+
+RecipeListItem.displayName = "RecipeListItem";
+
+export default RecipeListItem;
 
 const styles = StyleSheet.create({
   container: {

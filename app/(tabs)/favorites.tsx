@@ -8,11 +8,14 @@ import { Recipe } from "../../src/types";
 import recipesData from "../../src/data/recipes.json";
 import RecipeListItem from "../../src/components/recipe/RecipeListItem";
 import SwipeableRow from "../../src/components/recipe/SwipeableRow";
+import EmptyState from "../../src/components/common/EmptyState";
+import { useRouter } from "expo-router";
 
 const recipes = recipesData as Recipe[];
 
 export default function FavoritesScreen() {
   const { favorites, toggleFavorite } = useFavorites();
+  const router = useRouter();
 
   const favoriteRecipes = recipes.filter((recipe) => 
     favorites.includes(recipe.id)
@@ -23,7 +26,6 @@ export default function FavoritesScreen() {
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Favorites</Text>
       </View>
-
       {favoriteRecipes.length > 0 ? (
         <ScrollView 
           showsVerticalScrollIndicator={false} 
@@ -39,11 +41,13 @@ export default function FavoritesScreen() {
           <View style={styles.footerSpacer} />
         </ScrollView>
       ) : (
-        <View style={styles.emptyState}>
-          <Ionicons name="heart-outline" size={80} color={COLORS.primary} style={{ opacity: 0.2 }} />
-          <Text style={styles.title}>No Favorites Yet</Text>
-          <Text style={styles.subtitle}>Recipes you favorite will appear here.</Text>
-        </View>
+        <EmptyState 
+          icon="heart-outline"
+          title="No Favorites Yet"
+          description="Your favorite recipes will appear here so you can find them easily."
+          actionLabel="Explore Recipes"
+          onAction={() => router.push("/(tabs)")}
+        />
       )}
     </SafeAreaView>
   );

@@ -22,20 +22,13 @@ import Animated, {
 } from "react-native-reanimated";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS, RADIUS, SPACING } from "../src/constants/theme";
+import { useUser } from "../src/context/UserContext";
 
 const { width, height } = Dimensions.get("window");
 
 // --- Constants ---
-const THEME = {
-  bg: "#0E0E10",
-  bg2: "#1A1B1E",
-  bg3: "#27272A",
-  accent: "#f4a24a",
-  accent2: "#e8793a",
-  text: "#F2F2F2",
-  text2: "#A1A1AA",
-  text3: "#71717A",
-};
+// Use global COLORS instead of local THEME
+const THEME = COLORS;
 
 // --- Sub-components ---
 
@@ -94,6 +87,7 @@ const Particle = ({ delay = 0 }: { delay?: number }) => {
 
 export default function OnboardingScreen() {
   const router = useRouter();
+  const { onboardingComplete, setName: setGlobalName, setOnboardingComplete, isLoading: isUserLoading } = useUser();
   const [step, setStep] = useState(1);
   const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -101,6 +95,12 @@ export default function OnboardingScreen() {
   // Transitions
   const screenOpacity = useSharedValue(1);
   const screenTranslateX = useSharedValue(0);
+
+  useEffect(() => {
+    if (!isUserLoading && onboardingComplete) {
+      router.replace("/(tabs)");
+    }
+  }, [onboardingComplete, isUserLoading]);
 
   const switchStep = useCallback((nextStep: number) => {
     screenOpacity.value = withTiming(0, { duration: 300 }, () => {
@@ -115,14 +115,17 @@ export default function OnboardingScreen() {
     if (step === 1) switchStep(2);
     else if (step === 2 && name.length >= 2) {
       setIsLoading(true);
+      // Simulate a small delay for premium feel
       setTimeout(() => {
         setIsLoading(false);
+        setGlobalName(name);
         switchStep(3);
       }, 1200);
     }
   };
 
   const handleExplore = () => {
+    setOnboardingComplete(true);
     router.replace("/(tabs)");
   };
 
@@ -130,6 +133,8 @@ export default function OnboardingScreen() {
     opacity: screenOpacity.value,
     transform: [{ translateX: screenTranslateX.value }],
   }));
+
+  if (isUserLoading) return <View style={[styles.container, { backgroundColor: COLORS.background }]} />;
 
   return (
     <View style={styles.container}>

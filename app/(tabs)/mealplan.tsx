@@ -11,6 +11,7 @@ import { RecipeImages } from "../../src/constants/recipe-images";
 import { Link, useRouter } from "expo-router";
 import * as Haptics from "expo-haptics";
 import Animated, { FadeInRight } from "react-native-reanimated";
+import EmptyState from "../../src/components/common/EmptyState";
 
 const recipes = recipesData as Recipe[];
 
@@ -98,13 +99,13 @@ export default function MealPlanScreen() {
           <View style={styles.footerSpacer} />
         </ScrollView>
       ) : (
-        <View style={styles.emptyState}>
-          <View style={styles.iconCircle}>
-            <Ionicons name="restaurant-outline" size={50} color={COLORS.primary} />
-          </View>
-          <Text style={styles.title}>Your Plan is Empty</Text>
-          <Text style={styles.subtitle}>Choose a recipe and click &quot;Start Cooking&quot; to add it to your daily plan.</Text>
-        </View>
+        <EmptyState 
+          icon="restaurant-outline"
+          title="Your Plan is Empty"
+          description="Choose a recipe and add it to your daily plan to start your cooking journey."
+          actionLabel="Find Recipes"
+          onAction={() => router.push("/(tabs)")}
+        />
       )}
     </SafeAreaView>
   );
