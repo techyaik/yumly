@@ -11570,8 +11570,8 @@
     "summary": "Delicate cottage cheese dumplings served floating in sweet saffron-cardamom milk.",
     "isVeg": true,
     "images": {
-      "thumbnail": "../assets/images/recipes/navratan_korma.png",
-      "hero": "../assets/images/recipes/navratan_korma.png"
+      "thumbnail": "../assets/images/recipes/rasmalai.png",
+      "hero": "../assets/images/recipes/rasmalai.png"
     },
     "metadata": {
       "prepTimeMinutes": 30,
@@ -11689,8 +11689,8 @@
     "summary": "Luscious Indian carrot pudding slow-cooked in milk, ghee, and sugar, garnished with nuts.",
     "isVeg": true,
     "images": {
-      "hero": "../assets/images/recipes/rajma_chawal.png",
-      "thumbnail": "../assets/images/recipes/rajma_chawal.png"
+      "hero": "../assets/images/recipes/gajar_halwa.png",
+      "thumbnail": "../assets/images/recipes/gajar_halwa.png"
     },
     "metadata": {
       "servings": 4,
@@ -11818,8 +11818,8 @@
     "summary": "Traditional Indian ice cream with intense mango flavor \u2014 dense, creamy and refreshing.",
     "isVeg": true,
     "images": {
-      "thumbnail": "../assets/images/recipes/malai_kofta.png",
-      "hero": "../assets/images/recipes/malai_kofta.png"
+      "thumbnail": "../assets/images/recipes/mango_kulfi.png",
+      "hero": "../assets/images/recipes/mango_kulfi.png"
     },
     "metadata": {
       "prepTimeMinutes": 15,
