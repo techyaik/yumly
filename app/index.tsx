@@ -4,123 +4,29 @@ import { useRouter } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   Dimensions,
-  Image,
   Platform,
   StatusBar,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import Animated, {
   Easing,
   useAnimatedStyle,
   useSharedValue,
-  withDelay,
   withRepeat,
   withTiming
 } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
+import SpatulaIcon from "../src/components/common/SpatulaIcon";
 import { COLORS, FONTS, RADIUS } from "../src/constants/theme";
 import { useUser } from "../src/context/UserContext";
 
 const { width } = Dimensions.get("window");
 
 // --- Sub-components ---
-
-const FloatingOrb = ({
-  style,
-  delay = 0,
-}: {
-  style: any;
-  delay?: number;
-}) => {
-  const floatX = useSharedValue(0);
-  const floatY = useSharedValue(0);
-  const scale = useSharedValue(1);
-
-  useEffect(() => {
-    floatX.value = withDelay(
-      delay,
-      withRepeat(
-        withTiming(20, {
-          duration: 8000,
-          easing: Easing.inOut(Easing.ease),
-        }),
-        -1,
-        true
-      )
-    );
-    floatY.value = withDelay(
-      delay,
-      withRepeat(
-        withTiming(-30, {
-          duration: 8000,
-          easing: Easing.inOut(Easing.ease),
-        }),
-        -1,
-        true
-      )
-    );
-    scale.value = withDelay(
-      delay,
-      withRepeat(
-        withTiming(1.1, {
-          duration: 8000,
-          easing: Easing.inOut(Easing.ease),
-        }),
-        -1,
-        true
-      )
-    );
-  }, [delay, floatX, floatY, scale]);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [
-      { translateX: floatX.value },
-      { translateY: floatY.value },
-      { scale: scale.value },
-    ],
-  }));
-
-  return (
-    <Animated.View style={[styles.orb, style, animatedStyle]}>
-      <LinearGradient
-        colors={[style.backgroundColor, "transparent"]}
-        style={StyleSheet.absoluteFill}
-      />
-    </Animated.View>
-  );
-};
-
-const Particle = ({ delay = 0 }: { delay?: number }) => {
-  const opacity = useSharedValue(0);
-  const scale = useSharedValue(0);
-  const top = Math.random() * 100;
-  const left = Math.random() * 100;
-
-  useEffect(() => {
-    opacity.value = withDelay(
-      delay,
-      withRepeat(withTiming(0.5, { duration: 2000 }), -1, true)
-    );
-    scale.value = withDelay(
-      delay,
-      withRepeat(withTiming(1, { duration: 2000 }), -1, true)
-    );
-  }, [delay, opacity, scale]);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value,
-    transform: [{ scale: scale.value }],
-    position: "absolute",
-    top: `${top}%`,
-    left: `${left}%`,
-  }));
-
-  return <Animated.View style={[styles.particle, animatedStyle]} />;
-};
 
 // --- Main Screen ---
 
@@ -191,44 +97,13 @@ export default function OnboardingScreen() {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
 
-      {/* Background Orbs */}
-      {(step === 1 || step === 3) && (
-        <View style={StyleSheet.absoluteFill}>
-          <FloatingOrb
-            style={{
-              ...styles.orb1,
-              backgroundColor: "rgba(232,168,56,0.1)",
-            }}
-          />
-          <FloatingOrb
-            style={{
-              ...styles.orb2,
-              backgroundColor: "rgba(212,101,74,0.06)",
-            }}
-            delay={3000}
-          />
-          <FloatingOrb
-            style={{
-              ...styles.orb3,
-              backgroundColor: "rgba(232,168,56,0.04)",
-            }}
-            delay={5000}
-          />
-          <View style={styles.particlesContainer}>
-            {[...Array(12)].map((_, i) => (
-              <Particle key={i} delay={i * 300} />
-            ))}
-          </View>
-        </View>
-      )}
-
       {/* Logo */}
       <View style={styles.logoContainer}>
-        <Image
-          source={require("../assets/images/LOGO1.png")}
-          style={styles.logoImage}
-          resizeMode="contain"
-        />
+        <View style={styles.logoRow}>
+          <Ionicons name="restaurant-outline" size={24} color={COLORS.primary} />
+          <Text style={styles.logoText}>yuml</Text>
+          <SpatulaIcon size={24} color={COLORS.primary} />
+        </View>
       </View>
 
       <Animated.View style={[styles.screenWrapper, animatedScreenStyle]}>
@@ -531,21 +406,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  // Background
-  orb: {
-    position: "absolute",
-    borderRadius: 150,
-  },
-  orb1: { width: 300, height: 300, top: -80, left: -60 },
-  orb2: { width: 250, height: 250, bottom: 120, right: -80 },
-  orb3: { width: 200, height: 200, top: "40%", left: "30%" },
-  particlesContainer: { ...StyleSheet.absoluteFillObject },
-  particle: {
-    width: 2,
-    height: 2,
-    backgroundColor: COLORS.primary,
-    borderRadius: 1,
-  },
   // Step 1
   logoContainer: {
     position: "absolute",
@@ -557,9 +417,17 @@ const styles = StyleSheet.create({
     height: 60,
     zIndex: 10,
   },
-  logoImage: {
-    width: width * 0.4,
-    height: 45,
+  logoRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  logoText: {
+    fontSize: 28,
+    fontFamily: FONTS.serif,
+    color: COLORS.primary,
+    fontWeight: "700",
+    letterSpacing: 1,
   },
   heroArea: {
     height: 380,

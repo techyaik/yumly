@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import { View, TextInput, StyleSheet, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS, SPACING, RADIUS } from "../../constants/theme";
@@ -22,8 +22,6 @@ const AnimatedView = Animated.createAnimatedComponent(View);
 export default function SearchBar({ value, onChangeText, onFocus, onBlur, onSubmitEditing }: SearchBarProps) {
   const inputRef = useRef<TextInput>(null);
   const focusProgress = useSharedValue(0);
-  const [isFocused, setIsFocused] = useState(false);
-
   const containerAnimStyle = useAnimatedStyle(() => ({
     borderColor: interpolateColor(
       focusProgress.value,
@@ -38,13 +36,11 @@ export default function SearchBar({ value, onChangeText, onFocus, onBlur, onSubm
   }));
 
   const handleFocus = () => {
-    setIsFocused(true);
     focusProgress.value = withTiming(1, { duration: 300 });
     onFocus?.();
   };
 
   const handleBlur = () => {
-    setIsFocused(false);
     focusProgress.value = withTiming(0, { duration: 300 });
     onBlur?.();
   };
@@ -52,13 +48,6 @@ export default function SearchBar({ value, onChangeText, onFocus, onBlur, onSubm
   return (
     <Pressable onPress={() => inputRef.current?.focus()}>
       <AnimatedView style={[styles.container, containerAnimStyle]}>
-        <View style={styles.searchIconWrap}>
-          <Ionicons
-            name="search"
-            size={18}
-            color={isFocused ? COLORS.primary : COLORS.textMuted}
-          />
-        </View>
         <TextInput
           ref={inputRef}
           placeholder="Search recipes, ingredients..."
@@ -101,14 +90,6 @@ const styles = StyleSheet.create({
     marginVertical: SPACING.m,
     borderWidth: 1,
     borderColor: COLORS.border,
-  },
-  searchIconWrap: {
-    width: 32,
-    height: 32,
-    borderRadius: 10,
-    backgroundColor: "rgba(232, 168, 56, 0.08)",
-    alignItems: "center",
-    justifyContent: "center",
   },
   input: {
     flex: 1,

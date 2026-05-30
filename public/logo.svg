@@ -13,9 +13,19 @@
     <!-- Smile curve connecting them -->
     <path d="M22 68C28 80 44 82 50 70" stroke="#2E8B57" stroke-width="4" stroke-linecap="round" fill="none"/>
   </g>
-  <!-- "yumly" text -->
+  <!-- "yum" text (first part, dark) -->
   <text x="120" y="72" font-family="'SF Pro Display', 'Helvetica Neue', Arial, sans-serif" font-size="52" font-weight="700" fill="#1A1C1E" letter-spacing="-1">yum</text>
-  <text x="248" y="72" font-family="'SF Pro Display', 'Helvetica Neue', Arial, sans-serif" font-size="52" font-weight="700" fill="#FF6B35" letter-spacing="-1">ly</text>
+  <!-- "l" text (second part, orange, last y replaced by spatula) -->
+  <text x="248" y="72" font-family="'SF Pro Display', 'Helvetica Neue', Arial, sans-serif" font-size="52" font-weight="700" fill="#FF6B35" letter-spacing="-1">l</text>
+  <!-- Y-shaped spatula replacing last "y" -->
+  <g transform="translate(268, 18)">
+    <!-- Spatula head forming Y silhouette -->
+    <path d="M17 6 C6 6 0 14 0 24 C0 32 6 36 17 36 C28 36 34 32 34 24 C34 14 28 6 17 6Z" fill="#FF6B35"/>
+    <!-- Spatula slot -->
+    <rect x="14" y="14" width="6" height="18" rx="1" fill="#FFFFFF"/>
+    <!-- Spatula handle -->
+    <rect x="15.5" y="36" width="3" height="24" rx="1.5" fill="#FF6B35"/>
+  </g>
   <!-- Subtle underline accent -->
   <line x1="120" y1="84" x2="330" y2="84" stroke="#FF6B35" stroke-width="3" stroke-linecap="round" opacity="0.3"/>
 </svg>

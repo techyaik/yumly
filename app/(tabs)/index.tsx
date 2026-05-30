@@ -1,27 +1,27 @@
-import React, { useState, useMemo , useEffect } from "react";
+import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   FlatList,
-  Image,
+  Pressable,
+  StatusBar,
   StyleSheet,
   Text,
-  View,
-  StatusBar,
-  Pressable,
+  View
 } from "react-native";
+import Animated, { FadeIn, FadeInDown, FadeOut } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { COLORS, SPACING, FONTS, RADIUS } from "../../src/constants/theme";
-import SearchBar from "../../src/components/recipe/SearchBar";
-import RecipeCard from "../../src/components/recipe/RecipeCard";
+import EmptyState from "../../src/components/common/EmptyState";
+import SpatulaIcon from "../../src/components/common/SpatulaIcon";
 import CategoryBar from "../../src/components/recipe/CategoryBar";
 import FeaturedCarousel from "../../src/components/recipe/FeaturedCarousel";
-import { Recipe } from "../../src/types";
-import recipesData from "../../src/data/recipes.json";
-import { Ionicons } from "@expo/vector-icons";
+import RecipeCard from "../../src/components/recipe/RecipeCard";
+import SearchBar from "../../src/components/recipe/SearchBar";
+import { COLORS, FONTS, RADIUS, SPACING } from "../../src/constants/theme";
 import { useUser } from "../../src/context/UserContext";
-import EmptyState from "../../src/components/common/EmptyState";
+import recipesData from "../../src/data/recipes.json";
 import { useDebounce } from "../../src/hooks/useDebounce";
-import Animated, { FadeIn, FadeInDown, FadeOut } from "react-native-reanimated";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Recipe } from "../../src/types";
 
 const recipes = recipesData as Recipe[];
 
@@ -45,16 +45,8 @@ const getTimeGreeting = () => {
   return { text: "Late night cravings?", emoji: "🌙" };
 };
 
-const getChefRank = (count: number) => {
-  if (count >= 31) return { title: "Master Chef", icon: "🌟" };
-  if (count >= 16) return { title: "Head Chef", icon: "👨‍🍳" };
-  if (count >= 6) return { title: "Sous Chef", icon: "🔪" };
-  return { title: "Novice Chef", icon: "🍳" };
-};
-
 export default function HomeScreen() {
-  const { name, recipesCooked } = useUser();
-  const rank = getChefRank(recipesCooked);
+  const { name } = useUser();
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -144,19 +136,11 @@ export default function HomeScreen() {
       >
         <View style={styles.headerTitleRow}>
           <View style={styles.logoContainer}>
-            <Image
-              source={require("../../assets/images/LOGO1.png")}
-              style={styles.logoImage}
-              resizeMode="contain"
-            />
-          </View>
-          <View style={styles.headerRight}>
-            <View style={styles.rankBadge}>
-              <Text style={styles.rankText}>{rank.title.toUpperCase()}</Text>
+            <View style={styles.logoRow}>
+              <Ionicons name="restaurant-outline" size={20} color={COLORS.primary} />
+              <Text style={styles.logoText}>yuml</Text>
+              <SpatulaIcon size={20} color={COLORS.primary} />
             </View>
-            <Pressable style={styles.profileBtn}>
-              <Text style={styles.profileEmoji}>{rank.icon}</Text>
-            </Pressable>
           </View>
         </View>
 
@@ -337,27 +321,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     height: 40,
   },
-  logoImage: {
-    width: 120,
-    height: 40,
-  },
-  profileBtn: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    backgroundColor: COLORS.elevated,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: COLORS.border,
-  },
-  profileEmoji: {
-    fontSize: 20,
-  },
-  headerRight: {
+  logoRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
+    gap: 6,
+  },
+  logoText: {
+    fontSize: 22,
+    fontFamily: FONTS.serif,
+    color: COLORS.primary,
+    fontWeight: "700",
+    letterSpacing: 1,
   },
   rankBadge: {
     backgroundColor: COLORS.primaryLight,
