@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { Image } from "expo-image";
+import { LinearGradient } from "expo-linear-gradient";
 import { Link } from "expo-router";
 import React from "react";
 import { Dimensions, Pressable, StyleSheet, Text, View } from "react-native";
@@ -75,7 +76,10 @@ const RecipeCard = React.memo(
                 contentFit="cover"
                 transition={400}
               />
-              <View style={[styles.imageGradient, { backgroundColor: "rgba(0,0,0,0.4)" }]} />
+              <LinearGradient
+                colors={["transparent", "rgba(0,0,0,0.55)"]}
+                style={styles.imageGradient}
+              />
 
               {/* Veg indicator */}
               <VegIndicator isVeg={recipe.isVeg} colors={colors} />
@@ -155,7 +159,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    height: "40%",
+    height: "25%",
   },
   favoriteButton: {
     position: "absolute",

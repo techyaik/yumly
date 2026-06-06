@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
+import { LinearGradient } from "expo-linear-gradient";
 import { Link } from "expo-router";
 import React, { useRef, useState } from "react";
 import {
@@ -79,7 +80,10 @@ export default function FeaturedCarousel({ recipes }: FeaturedCarouselProps) {
                   contentFit="cover"
                   transition={400}
                 />
-                <View style={[styles.cardGradient, { backgroundColor: "rgba(0,0,0,0.5)" }]} />
+                <LinearGradient
+                  colors={["transparent", "rgba(0,0,0,0.7)"]}
+                  style={styles.cardGradient}
+                />
                 
                 {/* Category tag */}
                 <View style={styles.categoryTag}>
@@ -178,7 +182,11 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
   },
   cardGradient: {
-    ...StyleSheet.absoluteFillObject,
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: "55%",
   },
   categoryTag: {
     position: "absolute",

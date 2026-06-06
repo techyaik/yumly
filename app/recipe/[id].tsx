@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { Image } from "expo-image";
+import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import {
@@ -87,7 +88,7 @@ export default function RecipeDetailScreen() {
             style={styles.heroImage}
             contentFit="cover"
           />
-          <View style={[styles.heroGradient, { backgroundColor: "rgba(13,13,15,0.6)" }]} />
+          <View style={[styles.heroGradient, { backgroundColor: "rgba(13,13,15,0.5)" }]} />
 
           {/* Top buttons */}
           <Pressable style={[styles.backButton, { top: insets.top + SPACING.s }]} onPress={() => router.back()}>
