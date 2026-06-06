@@ -15,6 +15,7 @@ import {
   View,
 } from "react-native";
 import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
+import { SafeAreaView } from "react-native-safe-area-context";
 import IngredientList from "../../src/components/recipe/IngredientList";
 import { ReadOnlyInstructionStep } from "../../src/components/recipe/InstructionStep";
 import { RecipeImages } from "../../src/constants/recipe-images";
@@ -43,12 +44,12 @@ export default function RecipeDetailScreen() {
 
   if (!recipe) {
     return (
-      <View style={styles.errorContainer}>
+      <SafeAreaView style={styles.errorContainer} edges={["left", "right"]}>
         <Text style={styles.errorText}>Recipe not found</Text>
         <Pressable onPress={() => router.back()}>
           <Text style={styles.backLink}>Go Back</Text>
         </Pressable>
-      </View>
+      </SafeAreaView>
     );
   }
 
@@ -75,7 +76,7 @@ export default function RecipeDetailScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={["left", "right"]}>
       <StatusBar barStyle="light-content" />
       <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
         {/* Hero Image */}
@@ -357,7 +358,7 @@ export default function RecipeDetailScreen() {
           </Animated.View>
         </View>
       </Modal>
-    </View>
+    </SafeAreaView>
   );
 }
 

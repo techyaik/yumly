@@ -5,7 +5,9 @@ import React, { useCallback, useEffect, useState } from "react";
 import {
   Dimensions,
   Image,
+  KeyboardAvoidingView,
   Platform,
+  ScrollView,
   StatusBar,
   StyleSheet,
   Text,
@@ -21,7 +23,8 @@ import Animated, {
   withRepeat,
   withTiming
 } from "react-native-reanimated";
-import { COLORS, FONTS, RADIUS } from "../src/constants/theme";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { COLORS, FONTS, RADIUS, SPACING } from "../src/constants/theme";
 import { useUser } from "../src/context/UserContext";
 
 const { width } = Dimensions.get("window");
@@ -88,39 +91,52 @@ export default function OnboardingScreen() {
 
   if (isUserLoading)
     return (
-      <View
+      <SafeAreaView
         style={[styles.container, { backgroundColor: COLORS.background }]}
+        edges={["top", "bottom", "left", "right"]}
       />
     );
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={["top", "bottom", "left", "right"]}>
       <StatusBar barStyle="light-content" />
 
-      {/* Logo */}
-      <View style={styles.logoContainer}>
-        <Image 
-          source={require('../assets/images/Logo.png')} 
-          style={{ width: 50, height: 50 }} 
-          resizeMode="contain" 
-        />
-      </View>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+      >
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          bounces={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          {/* Logo */}
+          <View style={styles.logoContainer}>
+            <Image
+              source={require('../assets/images/Logo.png')}
+              style={{ width: 50, height: 50 }}
+              resizeMode="contain"
+            />
+          </View>
 
-      <Animated.View style={[styles.screenWrapper, animatedScreenStyle]}>
-        {step === 1 && <StepOne onNext={handleNextStep} />}
-        {step === 2 && (
-          <StepTwo
-            name={name}
-            setName={setName}
-            onNext={handleNextStep}
-            isLoading={isLoading}
-          />
-        )}
-        {step === 3 && (
-          <StepThree name={name} onExplore={handleExplore} />
-        )}
-      </Animated.View>
-    </View>
+          <Animated.View style={[styles.screenWrapper, animatedScreenStyle]}>
+            {step === 1 && <StepOne onNext={handleNextStep} />}
+            {step === 2 && (
+              <StepTwo
+                name={name}
+                setName={setName}
+                onNext={handleNextStep}
+                isLoading={isLoading}
+              />
+            )}
+            {step === 3 && (
+              <StepThree name={name} onExplore={handleExplore} />
+            )}
+          </Animated.View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
@@ -398,6 +414,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
+  scrollContent: {
+    flexGrow: 1,
+  },
   screenWrapper: {
     flex: 1,
   },
@@ -409,7 +428,7 @@ const styles = StyleSheet.create({
   // Step 1
   logoContainer: {
     position: "absolute",
-    top: Platform.OS === "ios" ? 60 : 50,
+    top: SPACING.m,
     left: 0,
     right: 0,
     alignItems: "center",

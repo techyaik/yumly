@@ -4,6 +4,8 @@ import React, { useEffect, useMemo, useState } from "react";
 import {
   FlatList,
   Image,
+  KeyboardAvoidingView,
+  Platform,
   Pressable,
   StatusBar,
   StyleSheet,
@@ -270,7 +272,11 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
       <StatusBar barStyle="light-content" />
-      <FlatList
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+      >
+        <FlatList
         data={filteredRecipes}
         keyExtractor={(item) => item.id}
         renderItem={({ item, index }) => (
@@ -287,7 +293,9 @@ export default function HomeScreen() {
         windowSize={11}
         removeClippedSubviews={true}
         ListFooterComponent={<View style={styles.footerSpacer} />}
+        keyboardShouldPersistTaps="handled"
       />
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
