@@ -1,7 +1,8 @@
 import React, { useRef } from "react";
 import { View, TextInput, StyleSheet, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { COLORS, SPACING, RADIUS } from "../../constants/theme";
+import { SPACING, RADIUS } from "../../constants/theme";
+import { useTheme } from "../../context/ThemeContext";
 import Animated, {
   useAnimatedStyle,
   withTiming,
@@ -19,19 +20,20 @@ interface SearchBarProps {
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
-export default function SearchBar({ value, onChangeText, onFocus, onBlur, onSubmitEditing }: SearchBarProps) {
+export default React.memo(function SearchBar({ value, onChangeText, onFocus, onBlur, onSubmitEditing }: SearchBarProps) {
   const inputRef = useRef<TextInput>(null);
+  const { colors } = useTheme();
   const focusProgress = useSharedValue(0);
   const containerAnimStyle = useAnimatedStyle(() => ({
     borderColor: interpolateColor(
       focusProgress.value,
       [0, 1],
-      ["rgba(245, 240, 235, 0.06)", "rgba(232, 168, 56, 0.3)"]
+      [colors.border, colors.borderAccent]
     ),
     backgroundColor: interpolateColor(
       focusProgress.value,
       [0, 1],
-      [COLORS.bg3, COLORS.elevated]
+      [colors.bg3, colors.elevated]
     ),
   }));
 
@@ -51,8 +53,8 @@ export default function SearchBar({ value, onChangeText, onFocus, onBlur, onSubm
         <TextInput
           ref={inputRef}
           placeholder="Search recipes, ingredients..."
-          placeholderTextColor={COLORS.textMuted}
-          style={styles.input}
+          placeholderTextColor={colors.textMuted}
+          style={[styles.input, { color: colors.text }]}
           value={value}
           onChangeText={onChangeText}
           autoCapitalize="none"
@@ -61,7 +63,7 @@ export default function SearchBar({ value, onChangeText, onFocus, onBlur, onSubm
           onBlur={handleBlur}
           onSubmitEditing={onSubmitEditing}
           returnKeyType="search"
-          selectionColor={COLORS.primary}
+          selectionColor={colors.primary}
         />
         {value.length > 0 && (
           <Pressable
@@ -69,15 +71,15 @@ export default function SearchBar({ value, onChangeText, onFocus, onBlur, onSubm
             onPress={() => onChangeText("")}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
-            <View style={styles.clearCircle}>
-              <Ionicons name="close" size={12} color={COLORS.text} />
+            <View style={[styles.clearCircle, { backgroundColor: colors.textMuted, borderColor: colors.border }]}>
+              <Ionicons name="close" size={14} color={colors.background} />
             </View>
           </Pressable>
         )}
       </AnimatedView>
     </Pressable>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -89,13 +91,11 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.l,
     marginVertical: SPACING.m,
     borderWidth: 1,
-    borderColor: COLORS.border,
   },
   input: {
     flex: 1,
     marginLeft: SPACING.s + 2,
     fontSize: 15,
-    color: COLORS.text,
     paddingVertical: 6,
     fontWeight: "400",
   },
@@ -106,10 +106,8 @@ const styles = StyleSheet.create({
     width: 22,
     height: 22,
     borderRadius: 11,
-    backgroundColor: COLORS.bg3,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: COLORS.border,
   },
 });

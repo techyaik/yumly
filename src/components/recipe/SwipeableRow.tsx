@@ -2,7 +2,8 @@ import React, { useRef } from 'react';
 import { Animated, StyleSheet, Text, Pressable, View } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, SPACING, RADIUS } from '../../constants/theme';
+import { SPACING, RADIUS } from '../../constants/theme';
+import { useTheme } from '../../context/ThemeContext';
 import * as Haptics from 'expo-haptics';
 
 interface SwipeableRowProps {
@@ -12,6 +13,7 @@ interface SwipeableRowProps {
 
 export default function SwipeableRow({ children, onDelete }: SwipeableRowProps) {
   const swipeableRef = useRef<Swipeable>(null);
+  const { colors } = useTheme();
 
   const renderRightActions = (
     progress: Animated.AnimatedInterpolation<number>,
@@ -25,7 +27,7 @@ export default function SwipeableRow({ children, onDelete }: SwipeableRowProps) 
 
     return (
       <Pressable 
-        style={styles.rightAction} 
+        style={[styles.rightAction, { backgroundColor: colors.error }]} 
         onPress={() => {
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
           swipeableRef.current?.close();
@@ -33,10 +35,10 @@ export default function SwipeableRow({ children, onDelete }: SwipeableRowProps) 
         }}
       >
         <Animated.View style={[styles.actionIcon, { transform: [{ scale }] }]}>
-          <View style={styles.trashCircle}>
-            <Ionicons name="trash-outline" size={20} color={COLORS.text} />
+          <View style={[styles.trashCircle, { backgroundColor: "rgba(255,255,255,0.15)" }]}>
+            <Ionicons name="trash-outline" size={20} color={colors.text} />
           </View>
-          <Text style={styles.actionText}>Remove</Text>
+          <Text style={[styles.actionText, { color: colors.text }]}>Remove</Text>
         </Animated.View>
       </Pressable>
     );
@@ -62,7 +64,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   rightAction: {
-    backgroundColor: COLORS.error,
     justifyContent: 'center',
     alignItems: 'flex-end',
     width: 100,
@@ -77,13 +78,11 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: 'rgba(255,255,255,0.15)',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 4,
   },
   actionText: {
-    color: COLORS.text,
     fontSize: 10,
     fontWeight: 'bold',
     letterSpacing: 0.5,

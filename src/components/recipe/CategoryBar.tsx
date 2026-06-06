@@ -1,19 +1,8 @@
 import * as Haptics from "expo-haptics";
 import React from "react";
-import { Pressable, ScrollView, StyleSheet, Text } from "react-native";
-import Animated, { FadeIn } from "react-native-reanimated";
-import { COLORS, RADIUS, SPACING } from "../../constants/theme";
-
-const CATEGORY_EMOJIS: { [key: string]: string } = {
-  "All": "✨",
-  "Breakfast": "🌅",
-  "Snacks": "🍿",
-  "Main Course": "🍛",
-  "Desserts": "🍰",
-  "Italian": "🇮🇹",
-  "Mexican": "🌮",
-  "Chinese": "🥡",
-};
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { RADIUS, SPACING } from "../../constants/theme";
+import { useTheme } from "../../context/ThemeContext";
 
 interface CategoryBarProps {
   categories: string[];
@@ -26,6 +15,7 @@ export default function CategoryBar({
   selectedCategory,
   onSelectCategory,
 }: CategoryBarProps) {
+  const { colors } = useTheme();
   const handleSelect = (category: string) => {
     if (category !== selectedCategory) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -41,25 +31,28 @@ export default function CategoryBar({
     >
       {categories.map((category, index) => {
         const isActive = category === selectedCategory;
-        const emoji = CATEGORY_EMOJIS[category] || "🍽️";
 
         return (
-          <Animated.View
-            key={category}
-            entering={FadeIn.delay(index * 50).duration(400)}
-          >
+          <View key={category}>
             <Pressable
               onPress={() => handleSelect(category)}
-              style={StyleSheet.flatten([styles.pill, isActive && styles.pillActive])}
+              style={StyleSheet.flatten([
+                styles.pill,
+                { backgroundColor: colors.surface, borderColor: colors.border },
+                isActive && { backgroundColor: colors.primaryLight, borderColor: colors.borderAccent },
+              ])}
             >
-              <Text style={styles.emoji}>{emoji}</Text>
               <Text
-                style={StyleSheet.flatten([styles.pillText, isActive && styles.pillTextActive])}
+                style={StyleSheet.flatten([
+                  styles.pillText,
+                  { color: colors.textMuted },
+                  isActive && { color: colors.primary, fontWeight: "700" },
+                ])}
               >
                 {category}
               </Text>
             </Pressable>
-          </Animated.View>
+          </View>
         );
       })}
     </ScrollView>
@@ -78,26 +71,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.m,
     paddingVertical: SPACING.s + 2,
     borderRadius: RADIUS.full,
-    backgroundColor: COLORS.surface,
     borderWidth: 1,
-    borderColor: COLORS.border,
     gap: 6,
-  },
-  pillActive: {
-    backgroundColor: COLORS.primaryLight,
-    borderColor: COLORS.borderAccent,
-  },
-  emoji: {
-    fontSize: 14,
   },
   pillText: {
     fontSize: 13,
     fontWeight: "600",
-    color: COLORS.textMuted,
     letterSpacing: 0.2,
-  },
-  pillTextActive: {
-    color: COLORS.primary,
-    fontWeight: "700",
   },
 });

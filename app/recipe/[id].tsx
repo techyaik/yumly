@@ -1,7 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { Image } from "expo-image";
-import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import {
@@ -14,14 +13,14 @@ import {
   Text,
   View,
 } from "react-native";
-import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import IngredientList from "../../src/components/recipe/IngredientList";
 import { ReadOnlyInstructionStep } from "../../src/components/recipe/InstructionStep";
 import { RecipeImages } from "../../src/constants/recipe-images";
-import { COLORS, FONTS, RADIUS, SHADOWS, SPACING } from "../../src/constants/theme";
+import { FONTS, RADIUS, SHADOWS, SPACING } from "../../src/constants/theme";
 import { useFavorites } from "../../src/context/FavoritesContext";
 import { useMealPlan } from "../../src/context/MealPlanContext";
+import { useTheme } from "../../src/context/ThemeContext";
 import recipesData from "../../src/data/recipes.json";
 import { Recipe } from "../../src/types";
 
@@ -32,6 +31,8 @@ const { width } = Dimensions.get("window");
 export default function RecipeDetailScreen() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
+  const { colors, mode } = useTheme();
+  const insets = useSafeAreaInsets();
   const { addToMealPlan } = useMealPlan();
   const { isFavorite, toggleFavorite } = useFavorites();
 
@@ -44,10 +45,10 @@ export default function RecipeDetailScreen() {
 
   if (!recipe) {
     return (
-      <SafeAreaView style={styles.errorContainer} edges={["left", "right"]}>
-        <Text style={styles.errorText}>Recipe not found</Text>
+      <SafeAreaView style={[styles.errorContainer, { backgroundColor: colors.background }]} edges={["left", "right"]}>
+        <Text style={[styles.errorText, { color: colors.text }]}>Recipe not found</Text>
         <Pressable onPress={() => router.back()}>
-          <Text style={styles.backLink}>Go Back</Text>
+          <Text style={[styles.backLink, { color: colors.primary }]}>Go Back</Text>
         </Pressable>
       </SafeAreaView>
     );
@@ -76,8 +77,8 @@ export default function RecipeDetailScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={["left", "right"]}>
-      <StatusBar barStyle="light-content" />
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={["left", "right"]}>
+      <StatusBar barStyle={mode === "dark" ? "light-content" : "dark-content"} />
       <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
         {/* Hero Image */}
         <View style={styles.heroContainer}>
@@ -86,19 +87,16 @@ export default function RecipeDetailScreen() {
             style={styles.heroImage}
             contentFit="cover"
           />
-          <LinearGradient
-            colors={["rgba(13,13,15,0.3)", "transparent", "rgba(13,13,15,0.95)"]}
-            locations={[0, 0.3, 1]}
-            style={styles.heroGradient}
-          />
+          <View style={[styles.heroGradient, { backgroundColor: "rgba(13,13,15,0.6)" }]} />
 
           {/* Top buttons */}
-          <Pressable style={styles.backButton} onPress={() => router.back()}>
-            <Ionicons name="chevron-back" size={22} color={COLORS.text} />
+          <Pressable style={[styles.backButton, { top: insets.top + SPACING.s }]} onPress={() => router.back()}>
+            <Ionicons name="chevron-back" size={22} color="#F5F0EB" />
           </Pressable>
           <Pressable
             style={[
               styles.headerFavoriteButton,
+              { top: insets.top + SPACING.s },
               isRecipeFavorite && styles.headerFavActive,
             ]}
             onPress={handleToggleFavorite}
@@ -106,15 +104,12 @@ export default function RecipeDetailScreen() {
             <Ionicons
               name={isRecipeFavorite ? "heart" : "heart-outline"}
               size={22}
-              color={isRecipeFavorite ? COLORS.error : COLORS.text}
+              color={isRecipeFavorite ? colors.error : "#F5F0EB"}
             />
           </Pressable>
 
           {/* Title overlay on hero */}
-          <Animated.View
-            entering={FadeInUp.delay(200).duration(500)}
-            style={styles.heroContent}
-          >
+          <View style={styles.heroContent}>
             <View style={styles.heroTags}>
               <View style={styles.categoryTag}>
                 <Text style={styles.categoryTagText}>{recipe.category}</Text>
@@ -122,37 +117,37 @@ export default function RecipeDetailScreen() {
               <View
                 style={[
                   styles.vegTag,
-                  { backgroundColor: recipe.isVeg ? `${COLORS.veg}20` : `${COLORS.nonVeg}20` },
+                  { backgroundColor: recipe.isVeg ? `${colors.veg}20` : `${colors.nonVeg}20` },
                 ]}
               >
                 <View
                   style={[
                     styles.vegTagDot,
-                    { backgroundColor: recipe.isVeg ? COLORS.veg : COLORS.nonVeg },
+                    { backgroundColor: recipe.isVeg ? colors.veg : colors.nonVeg },
                   ]}
                 />
                 <Text
                   style={[
                     styles.vegTagText,
-                    { color: recipe.isVeg ? COLORS.veg : COLORS.nonVeg },
+                    { color: recipe.isVeg ? colors.veg : colors.nonVeg },
                   ]}
                 >
                   {recipe.isVeg ? "Veg" : "Non-Veg"}
                 </Text>
               </View>
             </View>
-            <Text style={styles.heroTitle}>{recipe.title}</Text>
-          </Animated.View>
+            <Text style={[styles.heroTitle, { color: "#F5F0EB" }]}>{recipe.title}</Text>
+          </View>
         </View>
 
         {/* Content Card */}
-        <View style={styles.contentCard}>
-          <Animated.View entering={FadeInDown.delay(300).duration(500)}>
-            <Text style={styles.summary}>{recipe.summary}</Text>
-          </Animated.View>
+        <View style={[styles.contentCard, { backgroundColor: colors.background, paddingBottom: insets.bottom + 100 }]}>
+          <View>
+            <Text style={[styles.summary, { color: colors.textSecondary }]}>{recipe.summary}</Text>
+          </View>
 
           {/* Start Cooking Button */}
-          <Animated.View entering={FadeInDown.delay(400).duration(500)}>
+          <View>
             <Pressable
               style={styles.primaryButton}
               onPress={() => {
@@ -160,26 +155,20 @@ export default function RecipeDetailScreen() {
                 setModalVisible(true);
               }}
             >
-              <LinearGradient
-                colors={[COLORS.primary, COLORS.primaryDark]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.primaryBtnGradient}
-              >
-                <Ionicons name="play" size={18} color="#1A0E04" />
-                <Text style={styles.primaryButtonText}>Start Cooking</Text>
-              </LinearGradient>
+              <View style={[styles.primaryBtnGradient, { backgroundColor: colors.primary }]}>
+                <Ionicons name="play" size={18} color={colors.inverseText} />
+                <Text style={[styles.primaryButtonText, { color: colors.inverseText }]}>Start Cooking</Text>
+              </View>
             </Pressable>
-          </Animated.View>
+          </View>
 
           {/* Quick Info Bar */}
-          <Animated.View
-            entering={FadeInDown.delay(500).duration(500)}
-            style={styles.infoBar}
+          <View
+            style={[styles.infoBar, { backgroundColor: colors.card, borderColor: colors.border }]}
           >
             <View style={styles.infoItem}>
               <View style={styles.infoIconWrap}>
-                <Ionicons name="time-outline" size={18} color={COLORS.primary} />
+                <Ionicons name="time-outline" size={18} color={colors.primary} />
               </View>
               <View>
                 <Text style={styles.infoValue}>
@@ -191,7 +180,7 @@ export default function RecipeDetailScreen() {
             <View style={styles.infoDivider} />
             <View style={styles.infoItem}>
               <View style={styles.infoIconWrap}>
-                <Ionicons name="flame-outline" size={18} color={COLORS.accentWarm} />
+                <Ionicons name="flame-outline" size={18} color={colors.accentWarm} />
               </View>
               <View>
                 <Text style={styles.infoValue}>
@@ -203,7 +192,7 @@ export default function RecipeDetailScreen() {
             <View style={styles.infoDivider} />
             <View style={styles.infoItem}>
               <View style={styles.infoIconWrap}>
-                <Ionicons name="people-outline" size={18} color={COLORS.secondary} />
+                <Ionicons name="people-outline" size={18} color={colors.secondary} />
               </View>
               <View>
                 <Text style={styles.infoValue}>
@@ -218,7 +207,7 @@ export default function RecipeDetailScreen() {
                 <Ionicons
                   name="stats-chart-outline"
                   size={18}
-                  color={COLORS.accentCool}
+                  color={colors.accentCool}
                 />
               </View>
               <View>
@@ -228,7 +217,7 @@ export default function RecipeDetailScreen() {
                 <Text style={styles.infoLabel}>Level</Text>
               </View>
             </View>
-          </Animated.View>
+          </View>
 
           {/* Ingredients Section */}
           <IngredientList
@@ -243,7 +232,7 @@ export default function RecipeDetailScreen() {
               onPress={() => setInstructionsExpanded(!instructionsExpanded)}
             >
               <View style={styles.instructionsHeaderLeft}>
-                <Text style={styles.sectionTitle}>Instructions</Text>
+                <Text style={[styles.sectionTitle, { color: colors.text }]}>Instructions</Text>
                 <View style={styles.stepCountBadge}>
                   <Text style={styles.stepCountText}>
                     {recipe.instructions.length} steps
@@ -254,7 +243,7 @@ export default function RecipeDetailScreen() {
                 <Ionicons
                   name={instructionsExpanded ? "chevron-up" : "chevron-down"}
                   size={18}
-                  color={COLORS.textMuted}
+                  color={colors.textMuted}
                 />
               </View>
             </Pressable>
@@ -278,8 +267,7 @@ export default function RecipeDetailScreen() {
         onRequestClose={() => setModalVisible(false)}
       >
         <View style={styles.modalOverlay}>
-          <Animated.View
-            entering={FadeInUp.duration(400)}
+          <View
             style={styles.modalContent}
           >
             {/* Handle bar */}
@@ -294,7 +282,7 @@ export default function RecipeDetailScreen() {
                 style={styles.modalCloseBtn}
                 onPress={() => setModalVisible(false)}
               >
-                <Ionicons name="close" size={20} color={COLORS.textMuted} />
+                <Ionicons name="close" size={20} color={colors.textMuted} />
               </Pressable>
             </View>
 
@@ -307,7 +295,7 @@ export default function RecipeDetailScreen() {
                 onPress={() => setServings(Math.max(1, servings - 1))}
                 style={styles.pickerBtn}
               >
-                <Ionicons name="remove" size={24} color={COLORS.primary} />
+                <Ionicons name="remove" size={24} color={colors.primary} />
               </Pressable>
 
               <View style={styles.servingsCountContainer}>
@@ -321,12 +309,12 @@ export default function RecipeDetailScreen() {
                 onPress={() => setServings(servings + 1)}
                 style={styles.pickerBtn}
               >
-                <Ionicons name="add" size={24} color={COLORS.primary} />
+                <Ionicons name="add" size={24} color={colors.primary} />
               </Pressable>
             </View>
 
             <View style={styles.proportionBox}>
-              <Ionicons name="information-circle-outline" size={16} color={COLORS.primary} />
+              <Ionicons name="information-circle-outline" size={16} color={colors.primary} />
               <Text style={styles.proportionText}>
                 Ingredients adjusted for {servings} people (×
                 {(servings / recipe.metadata.servings).toFixed(1)})
@@ -338,7 +326,7 @@ export default function RecipeDetailScreen() {
                 style={styles.planBtn}
                 onPress={() => handleAddToPlan(false)}
               >
-                <Ionicons name="calendar-outline" size={18} color={COLORS.text} />
+                <Ionicons name="calendar-outline" size={18} color={colors.text} />
                 <Text style={styles.planBtnText}>Add to Plan</Text>
               </Pressable>
 
@@ -346,16 +334,13 @@ export default function RecipeDetailScreen() {
                 style={styles.cookBtn}
                 onPress={() => handleAddToPlan(true)}
               >
-                <LinearGradient
-                  colors={[COLORS.primary, COLORS.primaryDark]}
-                  style={styles.cookBtnGradient}
-                >
-                  <Ionicons name="play" size={16} color="#1A0E04" />
-                  <Text style={styles.cookBtnText}>Cook Now</Text>
-                </LinearGradient>
+                <View style={[styles.cookBtnGradient, { backgroundColor: colors.primary }]}>
+                  <Ionicons name="play" size={16} color={colors.inverseText} />
+                  <Text style={[styles.cookBtnText, { color: colors.inverseText }]}>Cook Now</Text>
+                </View>
               </Pressable>
             </View>
-          </Animated.View>
+          </View>
         </View>
       </Modal>
     </SafeAreaView>
@@ -365,7 +350,7 @@ export default function RecipeDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+
   },
   heroContainer: {
     height: 380,
@@ -381,7 +366,6 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: "absolute",
-    top: 54,
     left: 16,
     width: 40,
     height: 40,
@@ -394,7 +378,6 @@ const styles = StyleSheet.create({
   },
   headerFavoriteButton: {
     position: "absolute",
-    top: 54,
     right: 16,
     width: 40,
     height: 40,
@@ -453,14 +436,14 @@ const styles = StyleSheet.create({
   heroTitle: {
     fontSize: 28,
     fontWeight: "800",
-    color: COLORS.text,
+
     fontFamily: FONTS.serif,
     letterSpacing: -0.5,
   },
   contentCard: {
     flex: 1,
     marginTop: -20,
-    backgroundColor: COLORS.background,
+
     borderTopLeftRadius: RADIUS.xxl,
     borderTopRightRadius: RADIUS.xxl,
     paddingTop: SPACING.l,
@@ -468,7 +451,7 @@ const styles = StyleSheet.create({
   },
   summary: {
     fontSize: 14,
-    color: COLORS.textSecondary,
+
     paddingHorizontal: SPACING.m,
     lineHeight: 22,
     marginBottom: SPACING.l,
@@ -498,12 +481,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: COLORS.card,
+
     marginHorizontal: SPACING.m,
     padding: SPACING.m,
     borderRadius: RADIUS.l,
     borderWidth: 1,
-    borderColor: COLORS.border,
+
   },
   infoItem: {
     flexDirection: "row",
@@ -514,13 +497,13 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 10,
-    backgroundColor: COLORS.elevated,
+
     alignItems: "center",
     justifyContent: "center",
   },
   infoLabel: {
     fontSize: 9,
-    color: COLORS.textMuted,
+
     fontWeight: "600",
     letterSpacing: 0.3,
     textTransform: "uppercase",
@@ -528,13 +511,13 @@ const styles = StyleSheet.create({
   infoValue: {
     fontSize: 13,
     fontWeight: "800",
-    color: COLORS.text,
+
     fontFamily: FONTS.mono,
   },
   infoDivider: {
     width: 1,
     height: 30,
-    backgroundColor: COLORS.border,
+
   },
   // Instructions
   instructionsContainer: {
@@ -555,47 +538,47 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: "700",
-    color: COLORS.text,
+
     fontFamily: FONTS.serif,
   },
   stepCountBadge: {
-    backgroundColor: COLORS.primaryLight,
+
     paddingHorizontal: SPACING.s + 2,
     paddingVertical: 3,
     borderRadius: RADIUS.full,
     borderWidth: 1,
-    borderColor: COLORS.borderAccent,
+
   },
   stepCountText: {
     fontSize: 11,
     fontWeight: "700",
-    color: COLORS.primary,
+
     fontFamily: FONTS.mono,
   },
   expandBtn: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: COLORS.elevated,
+
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: COLORS.border,
+
   },
   errorContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: COLORS.background,
+
   },
   errorText: {
-    color: COLORS.text,
+
     fontSize: 18,
     fontWeight: "600",
   },
   backLink: {
     marginTop: 20,
-    color: COLORS.primary,
+
     fontWeight: "bold",
   },
   // Modal
@@ -605,20 +588,20 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   modalContent: {
-    backgroundColor: COLORS.card,
+
     borderTopLeftRadius: RADIUS.xxl,
     borderTopRightRadius: RADIUS.xxl,
     padding: SPACING.l,
     paddingBottom: 50,
     borderWidth: 1,
     borderBottomWidth: 0,
-    borderColor: COLORS.border,
+
   },
   modalHandle: {
     width: 36,
     height: 4,
     borderRadius: 2,
-    backgroundColor: COLORS.bg3,
+
     alignSelf: "center",
     marginBottom: SPACING.l,
   },
@@ -631,7 +614,7 @@ const styles = StyleSheet.create({
   modalLabel: {
     fontSize: 10,
     fontWeight: "800",
-    color: COLORS.primary,
+
     letterSpacing: 2,
     marginBottom: 4,
     fontFamily: FONTS.mono,
@@ -639,22 +622,22 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 22,
     fontWeight: "700",
-    color: COLORS.text,
+
     fontFamily: FONTS.serif,
   },
   modalCloseBtn: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: COLORS.elevated,
+
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: COLORS.border,
+
   },
   modalSubtitle: {
     fontSize: 14,
-    color: COLORS.textSecondary,
+
     marginBottom: SPACING.l,
   },
   servingsPicker: {
@@ -667,11 +650,11 @@ const styles = StyleSheet.create({
     width: 52,
     height: 52,
     borderRadius: 26,
-    backgroundColor: COLORS.elevated,
+
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: COLORS.border,
+
   },
   servingsCountContainer: {
     alignItems: "center",
@@ -680,30 +663,30 @@ const styles = StyleSheet.create({
   servingsNumber: {
     fontSize: 48,
     fontWeight: "800",
-    color: COLORS.text,
+
     fontFamily: FONTS.mono,
   },
   servingsLabel: {
     fontSize: 13,
-    color: COLORS.textMuted,
+
     marginTop: -4,
     fontWeight: "500",
   },
   proportionBox: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: COLORS.primaryLight,
+
     padding: SPACING.m,
     borderRadius: RADIUS.m,
     marginVertical: SPACING.m,
     borderWidth: 1,
-    borderColor: COLORS.borderAccent,
+
     gap: SPACING.s,
   },
   proportionText: {
     flex: 1,
     fontSize: 13,
-    color: COLORS.primary,
+
     lineHeight: 18,
   },
   modalActions: {
@@ -718,13 +701,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingVertical: SPACING.m,
     borderRadius: RADIUS.l,
-    backgroundColor: COLORS.elevated,
+
     borderWidth: 1,
-    borderColor: COLORS.border,
+
     gap: 8,
   },
   planBtnText: {
-    color: COLORS.text,
+
     fontSize: 14,
     fontWeight: "700",
   },

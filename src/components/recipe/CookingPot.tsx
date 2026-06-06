@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { View, StyleSheet, Text } from "react-native";
 import Animated, {
   useAnimatedStyle,
@@ -9,7 +9,18 @@ import Animated, {
   withDelay,
   Easing,
 } from "react-native-reanimated";
-import { COLORS, SHADOWS, FONTS } from "../../constants/theme";
+import { SHADOWS, FONTS } from "../../constants/theme";
+import { useTheme } from "../../context/ThemeContext";
+
+const staticStyles = StyleSheet.create({
+  steam: {
+    width: 18,
+    height: 18,
+    backgroundColor: "rgba(200, 200, 200, 0.3)",
+    borderRadius: 9,
+    position: "absolute",
+  },
+});
 
 interface CookingPotProps {
   isActive: boolean;
@@ -78,7 +89,7 @@ const SteamParticle = ({
     opacity: opacity.value,
   }));
 
-  return <Animated.View style={[styles.steam, animatedStyle]} />;
+  return <Animated.View style={[staticStyles.steam, animatedStyle]} />;
 };
 
 export default function CookingPot({
@@ -86,6 +97,7 @@ export default function CookingPot({
   timeLeft,
   formatTime,
 }: CookingPotProps) {
+  const { colors } = useTheme();
   const jiggle = useSharedValue(0);
   const scale = useSharedValue(1);
   const glowOpacity = useSharedValue(0);
@@ -134,6 +146,130 @@ export default function CookingPot({
     opacity: glowOpacity.value,
   }));
 
+  const styles = useMemo(() => StyleSheet.create({
+    container: {
+      height: 240,
+      width: 240,
+      justifyContent: "center",
+      alignItems: "center",
+      marginTop: 20,
+    },
+    ambientGlow: {
+      position: "absolute",
+      width: 200,
+      height: 200,
+      borderRadius: 100,
+      backgroundColor: colors.primary,
+      opacity: 0,
+    },
+    steamContainer: {
+      position: "absolute",
+      top: 10,
+      width: 60,
+      height: 60,
+      alignItems: "center",
+    },
+    potWrapper: {
+      alignItems: "center",
+      zIndex: 2,
+    },
+    potHandle: {
+      width: 28,
+      height: 12,
+      backgroundColor: colors.bg3,
+      borderTopLeftRadius: 6,
+      borderTopRightRadius: 6,
+      marginBottom: -2,
+      borderWidth: 1,
+      borderBottomWidth: 0,
+      borderColor: colors.border,
+    },
+    potLid: {
+      width: 140,
+      height: 16,
+      backgroundColor: colors.primary,
+      borderTopLeftRadius: 40,
+      borderTopRightRadius: 40,
+      borderBottomWidth: 2,
+      borderBottomColor: "rgba(0,0,0,0.15)",
+      ...SHADOWS.small,
+    },
+    potBody: {
+      width: 160,
+      height: 110,
+      backgroundColor: colors.primary,
+      borderBottomLeftRadius: 50,
+      borderBottomRightRadius: 50,
+      justifyContent: "center",
+      alignItems: "center",
+      overflow: "hidden",
+      ...SHADOWS.medium,
+    },
+    potShine: {
+      position: "absolute",
+      top: 10,
+      left: 15,
+      width: 28,
+      height: 55,
+      backgroundColor: "rgba(255,255,255,0.15)",
+      borderRadius: 14,
+      transform: [{ rotate: "15deg" }],
+    },
+    sideHandle: {
+      position: "absolute",
+      width: 22,
+      height: 36,
+      backgroundColor: colors.bg3,
+      top: 55,
+      borderRadius: 8,
+      zIndex: -1,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    leftHandle: {
+      left: -14,
+    },
+    rightHandle: {
+      right: -14,
+    },
+    timeWrapper: {
+      alignItems: "center",
+    },
+    timeText: {
+      fontSize: 36,
+      fontWeight: "800",
+      color: "#1A0E04",
+      fontFamily: FONTS.mono,
+    },
+    statusText: {
+      fontSize: 9,
+      fontWeight: "800",
+      color: "rgba(26,14,4,0.5)",
+      letterSpacing: 3,
+      marginTop: -2,
+      fontFamily: FONTS.mono,
+    },
+    burnerBase: {
+      width: 140,
+      height: 6,
+      backgroundColor: colors.bg3,
+      borderRadius: 3,
+      marginTop: -5,
+      zIndex: 1,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    heatGlow: {
+      position: "absolute",
+      top: -12,
+      left: 20,
+      width: 100,
+      height: 18,
+      backgroundColor: "rgba(232, 168, 56, 0.35)",
+      borderRadius: 10,
+    },
+  }), [colors]);
+
   return (
     <View style={styles.container}>
       {/* Ambient glow */}
@@ -179,134 +315,3 @@ export default function CookingPot({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    height: 240,
-    width: 240,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 20,
-  },
-  ambientGlow: {
-    position: "absolute",
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    backgroundColor: COLORS.primary,
-    opacity: 0,
-  },
-  steamContainer: {
-    position: "absolute",
-    top: 10,
-    width: 60,
-    height: 60,
-    alignItems: "center",
-  },
-  steam: {
-    width: 18,
-    height: 18,
-    backgroundColor: "rgba(200, 200, 200, 0.3)",
-    borderRadius: 9,
-    position: "absolute",
-  },
-  potWrapper: {
-    alignItems: "center",
-    zIndex: 2,
-  },
-  potHandle: {
-    width: 28,
-    height: 12,
-    backgroundColor: COLORS.bg3,
-    borderTopLeftRadius: 6,
-    borderTopRightRadius: 6,
-    marginBottom: -2,
-    borderWidth: 1,
-    borderBottomWidth: 0,
-    borderColor: COLORS.border,
-  },
-  potLid: {
-    width: 140,
-    height: 16,
-    backgroundColor: COLORS.primary,
-    borderTopLeftRadius: 40,
-    borderTopRightRadius: 40,
-    borderBottomWidth: 2,
-    borderBottomColor: "rgba(0,0,0,0.15)",
-    ...SHADOWS.small,
-  },
-  potBody: {
-    width: 160,
-    height: 110,
-    backgroundColor: COLORS.primary,
-    borderBottomLeftRadius: 50,
-    borderBottomRightRadius: 50,
-    justifyContent: "center",
-    alignItems: "center",
-    overflow: "hidden",
-    ...SHADOWS.medium,
-  },
-  potShine: {
-    position: "absolute",
-    top: 10,
-    left: 15,
-    width: 28,
-    height: 55,
-    backgroundColor: "rgba(255,255,255,0.15)",
-    borderRadius: 14,
-    transform: [{ rotate: "15deg" }],
-  },
-  sideHandle: {
-    position: "absolute",
-    width: 22,
-    height: 36,
-    backgroundColor: COLORS.bg3,
-    top: 55,
-    borderRadius: 8,
-    zIndex: -1,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-  },
-  leftHandle: {
-    left: -14,
-  },
-  rightHandle: {
-    right: -14,
-  },
-  timeWrapper: {
-    alignItems: "center",
-  },
-  timeText: {
-    fontSize: 36,
-    fontWeight: "800",
-    color: "#1A0E04",
-    fontFamily: FONTS.mono,
-  },
-  statusText: {
-    fontSize: 9,
-    fontWeight: "800",
-    color: "rgba(26,14,4,0.5)",
-    letterSpacing: 3,
-    marginTop: -2,
-    fontFamily: FONTS.mono,
-  },
-  burnerBase: {
-    width: 140,
-    height: 6,
-    backgroundColor: COLORS.bg3,
-    borderRadius: 3,
-    marginTop: -5,
-    zIndex: 1,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-  },
-  heatGlow: {
-    position: "absolute",
-    top: -12,
-    left: 20,
-    width: 100,
-    height: 18,
-    backgroundColor: "rgba(232, 168, 56, 0.35)",
-    borderRadius: 10,
-  },
-});

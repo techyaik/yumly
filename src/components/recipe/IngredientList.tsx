@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
-import { COLORS, SPACING, RADIUS, FONTS } from "../../constants/theme";
+import { RADIUS, SPACING, FONTS } from "../../constants/theme";
 import { Ionicons } from "@expo/vector-icons";
-import Animated, { FadeInDown } from "react-native-reanimated";
+import { useTheme } from "../../context/ThemeContext";
 
 import { Ingredient } from "../../types";
 
@@ -18,86 +18,57 @@ export default function IngredientList({
   currentServings,
 }: Props) {
   const [servings, setServings] = useState(currentServings || initialServings);
+  const { colors } = useTheme();
 
   const scale = servings / initialServings;
 
-  const getEmojiForIngredient = (name: string) => {
-    const n = name.toLowerCase();
-    if (n.includes("pasta")) return "🍝";
-    if (n.includes("tomato")) return "🍅";
-    if (n.includes("garlic")) return "🧄";
-    if (n.includes("cream")) return "🥛";
-    if (n.includes("basil")) return "🌿";
-    if (n.includes("egg")) return "🍳";
-    if (n.includes("tuna")) return "🐟";
-    if (n.includes("rice")) return "🍚";
-    if (n.includes("bread")) return "🍞";
-    if (n.includes("avocado")) return "🥑";
-    if (n.includes("beef")) return "🥩";
-    if (n.includes("chicken")) return "🍗";
-    if (n.includes("onion")) return "🧅";
-    if (n.includes("paneer")) return "🧀";
-    if (n.includes("butter")) return "🧈";
-    if (n.includes("oil")) return "🫒";
-    if (n.includes("salt")) return "🧂";
-    if (n.includes("sugar")) return "🍬";
-    if (n.includes("lentil") || n.includes("dal")) return "🫘";
-    if (n.includes("spinach") || n.includes("palak")) return "🥬";
-    if (n.includes("potato") || n.includes("aloo")) return "🥔";
-    if (n.includes("chilli") || n.includes("pepper")) return "🌶️";
-    if (n.includes("ginger")) return "🫚";
-    if (n.includes("flour")) return "🌾";
-    if (n.includes("milk")) return "🥛";
-    if (n.includes("chocolate")) return "🍫";
-    return "🥣";
-  };
+  const getInitial = (name: string) => name.charAt(0).toUpperCase();
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <View>
-          <Text style={styles.sectionLabel}>WHAT YOU NEED</Text>
-          <Text style={styles.title}>Ingredients</Text>
+          <Text style={[styles.sectionLabel, { color: colors.primary }]}>WHAT YOU NEED</Text>
+          <Text style={[styles.title, { color: colors.text }]}>Ingredients</Text>
         </View>
-        <View style={styles.servingsControl}>
+        <View style={[styles.servingsControl, { backgroundColor: colors.elevated, borderColor: colors.border }]}>
           <Pressable
             onPress={() => setServings(Math.max(1, servings - 1))}
-            style={styles.controlBtn}
+            style={[styles.controlBtn, { backgroundColor: colors.bg3 }]}
           >
-            <Ionicons name="remove" size={16} color={COLORS.text} />
+            <Ionicons name="remove" size={16} color={colors.text} />
           </Pressable>
-          <Text style={styles.servingsText}>{servings}</Text>
+          <Text style={[styles.servingsText, { color: colors.text }]}>{servings}</Text>
           <Pressable
             onPress={() => setServings(servings + 1)}
-            style={styles.controlBtn}
+            style={[styles.controlBtn, { backgroundColor: colors.bg3 }]}
           >
-            <Ionicons name="add" size={16} color={COLORS.text} />
+            <Ionicons name="add" size={16} color={colors.text} />
           </Pressable>
         </View>
       </View>
 
       <View style={styles.list}>
         {ingredients.map((item, index) => (
-          <Animated.View
+          <View
             key={index}
-            entering={FadeInDown.delay(index * 30).duration(300)}
-            style={styles.ingredientRow}
+            style={[styles.ingredientRow, { backgroundColor: colors.card, borderColor: colors.border }]}
           >
-            <View style={styles.iconContainer}>
-              <Text style={styles.emoji}>
-                {getEmojiForIngredient(item.name)}
+            <View style={[styles.iconContainer, { backgroundColor: colors.elevated }]}>
+              <Text style={[styles.initial, { color: colors.primary }]}>
+                {getInitial(item.name)}
               </Text>
             </View>
             <View style={styles.details}>
-              <Text style={styles.name}>{item.name}</Text>
-              <Text style={styles.quantity}>
+              <Text style={[styles.name, { color: colors.text }]}>{item.name}</Text>
+              <Text style={[styles.quantity, { color: colors.textMuted }]}>
                 {(item.quantity * scale).toFixed(
                   item.quantity % 1 === 0 ? 0 : 1
                 )}{" "}
                 {item.unit}
               </Text>
             </View>
-          </Animated.View>
+          </View>
         ))}
       </View>
     </View>
@@ -118,7 +89,6 @@ const styles = StyleSheet.create({
   sectionLabel: {
     fontSize: 10,
     fontWeight: "800",
-    color: COLORS.primary,
     letterSpacing: 2,
     marginBottom: 4,
     fontFamily: FONTS.mono,
@@ -126,30 +96,25 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: "700",
-    color: COLORS.text,
     fontFamily: FONTS.serif,
   },
   servingsControl: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: COLORS.elevated,
     borderRadius: RADIUS.m,
     padding: SPACING.xs,
     borderWidth: 1,
-    borderColor: COLORS.border,
   },
   controlBtn: {
     width: 28,
     height: 28,
     borderRadius: 8,
-    backgroundColor: COLORS.bg3,
     alignItems: "center",
     justifyContent: "center",
   },
   servingsText: {
     marginHorizontal: SPACING.m,
     fontWeight: "800",
-    color: COLORS.text,
     fontSize: 15,
     fontFamily: FONTS.mono,
   },
@@ -163,23 +128,21 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: SPACING.s + 2,
-    backgroundColor: COLORS.card,
     padding: SPACING.s + 2,
     borderRadius: RADIUS.m,
     borderWidth: 1,
-    borderColor: COLORS.border,
   },
   iconContainer: {
     width: 36,
     height: 36,
     borderRadius: 10,
-    backgroundColor: COLORS.elevated,
     alignItems: "center",
     justifyContent: "center",
     marginRight: SPACING.s,
   },
-  emoji: {
-    fontSize: 16,
+  initial: {
+    fontSize: 14,
+    fontWeight: "700",
   },
   details: {
     flex: 1,
@@ -187,13 +150,11 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 12,
     fontWeight: "600",
-    color: COLORS.text,
     marginBottom: 2,
   },
   quantity: {
     fontSize: 11,
     fontWeight: "600",
-    color: COLORS.textMuted,
     fontFamily: FONTS.mono,
   },
 });

@@ -1,6 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { LinearGradient } from "expo-linear-gradient";
 import { Link } from "expo-router";
 import React, { useRef, useState } from "react";
 import {
@@ -11,9 +10,9 @@ import {
   Text,
   View,
 } from "react-native";
-import Animated, { FadeIn, FadeInRight } from "react-native-reanimated";
 import { RecipeImages } from "../../constants/recipe-images";
-import { COLORS, FONTS, RADIUS, SHADOWS, SPACING } from "../../constants/theme";
+import { FONTS, RADIUS, SHADOWS, SPACING } from "../../constants/theme";
+import { useTheme } from "../../context/ThemeContext";
 import { Recipe } from "../../types";
 
 const { width } = Dimensions.get("window");
@@ -26,6 +25,7 @@ interface FeaturedCarouselProps {
 
 export default function FeaturedCarousel({ recipes }: FeaturedCarouselProps) {
   const flatListRef = useRef<FlatList>(null);
+  const { colors } = useTheme();
   const [activeIndex, setActiveIndex] = useState(0);
 
   // Take top 5 featured recipes
@@ -39,20 +39,17 @@ export default function FeaturedCarousel({ recipes }: FeaturedCarouselProps) {
   };
 
   return (
-    <Animated.View
-      entering={FadeIn.duration(600)}
-      style={styles.container}
-    >
+    <View style={styles.container}>
       <View style={styles.sectionHeader}>
         <View>
-          <Text style={styles.sectionLabel}>FEATURED</Text>
-          <Text style={styles.sectionTitle}>Chef{"'"}s Picks</Text>
+          <Text style={[styles.sectionLabel, { color: colors.primary }]}>FEATURED</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Chef{"'"}s Picks</Text>
         </View>
         <View style={styles.paginationDots}>
           {featured.map((_, i) => (
             <View
               key={i}
-              style={[styles.dot, i === activeIndex && styles.dotActive]}
+              style={[styles.dot, { backgroundColor: colors.bg3 }, i === activeIndex && { width: 20, backgroundColor: colors.primary }]}
             />
           ))}
         </View>
@@ -73,9 +70,8 @@ export default function FeaturedCarousel({ recipes }: FeaturedCarouselProps) {
         renderItem={({ item, index }) => (
           <Link href={`/recipe/${item.id}`} asChild>
             <Pressable style={styles.card}>
-              <Animated.View
-                entering={FadeInRight.delay(index * 100).duration(500)}
-                style={styles.cardInner}
+              <View
+                style={[styles.cardInner, { borderColor: colors.border }]}
               >
                 <Image
                   source={RecipeImages[item.id]}
@@ -83,14 +79,7 @@ export default function FeaturedCarousel({ recipes }: FeaturedCarouselProps) {
                   contentFit="cover"
                   transition={400}
                 />
-                <LinearGradient
-                  colors={[
-                    "transparent",
-                    "rgba(0,0,0,0.3)",
-                    "rgba(0,0,0,0.85)",
-                  ]}
-                  style={styles.cardGradient}
-                />
+                <View style={[styles.cardGradient, { backgroundColor: "rgba(0,0,0,0.5)" }]} />
                 
                 {/* Category tag */}
                 <View style={styles.categoryTag}>
@@ -99,41 +88,41 @@ export default function FeaturedCarousel({ recipes }: FeaturedCarouselProps) {
 
                 {/* Content overlay */}
                 <View style={styles.cardContent}>
-                  <Text style={styles.cardTitle} numberOfLines={2}>
+                  <Text style={[styles.cardTitle, { color: "#F5F0EB" }]} numberOfLines={2}>
                     {item.title}
                   </Text>
-                  <Text style={styles.cardSummary} numberOfLines={1}>
+                  <Text style={[styles.cardSummary, { color: "rgba(245,240,235,0.7)" }]} numberOfLines={1}>
                     {item.summary}
                   </Text>
                   <View style={styles.cardMeta}>
                     <View style={styles.metaItem}>
-                      <Ionicons name="time-outline" size={13} color={COLORS.primary} />
-                      <Text style={styles.metaText}>
+                      <Ionicons name="time-outline" size={13} color={colors.primary} />
+                      <Text style={[styles.metaText, { color: "rgba(245,240,235,0.8)" }]}>
                         {item.metadata.prepTimeMinutes} min
                       </Text>
                     </View>
-                    <View style={styles.metaDot} />
+                    <View style={[styles.metaDot, { backgroundColor: "rgba(245,240,235,0.3)" }]} />
                     <View style={styles.metaItem}>
-                      <Ionicons name="flame-outline" size={13} color={COLORS.primary} />
-                      <Text style={styles.metaText}>
+                      <Ionicons name="flame-outline" size={13} color={colors.primary} />
+                      <Text style={[styles.metaText, { color: "rgba(245,240,235,0.8)" }]}>
                         {item.metadata.calories} cal
                       </Text>
                     </View>
-                    <View style={styles.metaDot} />
+                    <View style={[styles.metaDot, { backgroundColor: "rgba(245,240,235,0.3)" }]} />
                     <View style={styles.metaItem}>
-                      <Ionicons name="people-outline" size={13} color={COLORS.primary} />
-                      <Text style={styles.metaText}>
+                      <Ionicons name="people-outline" size={13} color={colors.primary} />
+                      <Text style={[styles.metaText, { color: "rgba(245,240,235,0.8)" }]}>
                         {item.metadata.servings}
                       </Text>
                     </View>
                   </View>
                 </View>
-              </Animated.View>
+              </View>
             </Pressable>
           </Link>
         )}
       />
-    </Animated.View>
+    </View>
   );
 }
 
@@ -151,7 +140,6 @@ const styles = StyleSheet.create({
   sectionLabel: {
     fontSize: 10,
     fontWeight: "800",
-    color: COLORS.primary,
     letterSpacing: 2,
     marginBottom: 4,
     fontFamily: FONTS.mono,
@@ -159,7 +147,6 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 22,
     fontWeight: "700",
-    color: COLORS.text,
     fontFamily: FONTS.serif,
   },
   paginationDots: {
@@ -171,11 +158,6 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: COLORS.bg3,
-  },
-  dotActive: {
-    width: 20,
-    backgroundColor: COLORS.primary,
   },
   listContent: {
     paddingHorizontal: SPACING.m,
@@ -190,7 +172,6 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.xl,
     overflow: "hidden",
     borderWidth: 1,
-    borderColor: COLORS.border,
     ...SHADOWS.medium,
   },
   cardImage: {
@@ -225,14 +206,12 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 20,
     fontWeight: "800",
-    color: COLORS.text,
     marginBottom: 4,
     letterSpacing: -0.3,
     fontFamily: FONTS.serif,
   },
   cardSummary: {
     fontSize: 12,
-    color: "rgba(245,240,235,0.7)",
     marginBottom: SPACING.s,
     lineHeight: 16,
   },
@@ -248,14 +227,12 @@ const styles = StyleSheet.create({
   metaText: {
     fontSize: 11,
     fontWeight: "600",
-    color: "rgba(245,240,235,0.8)",
     fontFamily: FONTS.mono,
   },
   metaDot: {
     width: 3,
     height: 3,
     borderRadius: 1.5,
-    backgroundColor: "rgba(245,240,235,0.3)",
     marginHorizontal: SPACING.s,
   },
 });

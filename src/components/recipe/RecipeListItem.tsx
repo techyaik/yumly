@@ -4,10 +4,10 @@ import { Image } from "expo-image";
 import { Link } from "expo-router";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import Animated, { FadeInDown } from "react-native-reanimated";
 import { RecipeImages } from "../../constants/recipe-images";
-import { COLORS, FONTS, RADIUS, SHADOWS, SPACING } from "../../constants/theme";
+import { FONTS, RADIUS, SHADOWS, SPACING } from "../../constants/theme";
 import { useFavorites } from "../../context/FavoritesContext";
+import { useTheme } from "../../context/ThemeContext";
 import { RecipeSummary } from "./RecipeCard";
 
 const RecipeListItem = React.memo(
@@ -19,13 +19,13 @@ const RecipeListItem = React.memo(
     index: number;
   }) => {
     const { toggleFavorite, isFavorite } = useFavorites();
+    const { colors } = useTheme();
     const favorited = isFavorite(recipe.id);
 
     return (
       <Link href={`/recipe/${recipe.id}`} asChild>
-        <Pressable style={styles.container}>
-          <Animated.View
-            entering={FadeInDown.delay(index * 50).duration(400).springify()}
+        <Pressable style={StyleSheet.flatten([styles.container, { backgroundColor: colors.card, borderColor: colors.border }])}>
+          <View
             style={styles.inner}
           >
             {/* Thumbnail */}
@@ -42,8 +42,8 @@ const RecipeListItem = React.memo(
                   styles.vegDot,
                   {
                     backgroundColor: recipe.isVeg
-                      ? COLORS.veg
-                      : COLORS.nonVeg,
+                      ? colors.veg
+                      : colors.nonVeg,
                   },
                 ]}
               />
@@ -52,7 +52,7 @@ const RecipeListItem = React.memo(
             {/* Content */}
             <View style={styles.content}>
               <View style={styles.textContainer}>
-                <Text style={styles.title} numberOfLines={1}>
+                <Text style={[styles.title, { color: colors.text }]} numberOfLines={1}>
                   {recipe.title}
                 </Text>
                 <View style={styles.stats}>
@@ -60,15 +60,15 @@ const RecipeListItem = React.memo(
                     <Ionicons
                       name="time-outline"
                       size={13}
-                      color={COLORS.primary}
+                      color={colors.primary}
                     />
-                    <Text style={styles.statText}>
+                    <Text style={[styles.statText, { color: colors.textSecondary }]}>
                       {recipe.metadata.prepTimeMinutes} min
                     </Text>
                   </View>
-                  <View style={styles.dot} />
+                  <View style={[styles.dot, { backgroundColor: colors.textMuted }]} />
                   <View style={styles.statItem}>
-                    <Text style={styles.difficultyPill}>
+                    <Text style={[styles.difficultyPill, { color: colors.primary, backgroundColor: colors.primaryLight }]}>
                       {recipe.metadata.difficulty}
                     </Text>
                   </View>
@@ -78,7 +78,8 @@ const RecipeListItem = React.memo(
               <Pressable
                 style={[
                   styles.favoriteButton,
-                  favorited && styles.favoriteButtonActive,
+                  { backgroundColor: colors.elevated, borderColor: colors.border },
+                  favorited && { backgroundColor: "rgba(232, 93, 93, 0.1)", borderColor: "rgba(232, 93, 93, 0.2)" },
                 ]}
                 onPress={(e) => {
                   e.stopPropagation();
@@ -89,11 +90,11 @@ const RecipeListItem = React.memo(
                 <Ionicons
                   name={favorited ? "heart" : "heart-outline"}
                   size={18}
-                  color={favorited ? COLORS.error : COLORS.textMuted}
+                  color={favorited ? colors.error : colors.textMuted}
                 />
               </Pressable>
             </View>
-          </Animated.View>
+          </View>
         </Pressable>
       </Link>
     );
@@ -106,10 +107,8 @@ export default RecipeListItem;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: COLORS.card,
     borderRadius: RADIUS.l,
     borderWidth: 1,
-    borderColor: COLORS.border,
     ...SHADOWS.small,
   },
   inner: {
@@ -152,7 +151,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 15,
     fontWeight: "700",
-    color: COLORS.text,
     marginBottom: 6,
     letterSpacing: -0.2,
   },
@@ -167,15 +165,12 @@ const styles = StyleSheet.create({
   },
   statText: {
     fontSize: 12,
-    color: COLORS.textSecondary,
     fontFamily: FONTS.mono,
     fontWeight: "500",
   },
   difficultyPill: {
     fontSize: 10,
     fontWeight: "700",
-    color: COLORS.primary,
-    backgroundColor: COLORS.primaryLight,
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: RADIUS.full,
@@ -185,21 +180,14 @@ const styles = StyleSheet.create({
     width: 3,
     height: 3,
     borderRadius: 1.5,
-    backgroundColor: COLORS.textMuted,
     marginHorizontal: SPACING.s,
   },
   favoriteButton: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: COLORS.elevated,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: COLORS.border,
-  },
-  favoriteButtonActive: {
-    backgroundColor: "rgba(232, 93, 93, 0.1)",
-    borderColor: "rgba(232, 93, 93, 0.2)",
   },
 });

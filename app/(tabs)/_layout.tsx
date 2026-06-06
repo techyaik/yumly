@@ -3,9 +3,10 @@ import { Tabs } from "expo-router";
 import React from "react";
 import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { COLORS, RADIUS, SHADOWS, SPACING } from "../../src/constants/theme";
+import { RADIUS, SHADOWS, SPACING } from "../../src/constants/theme";
 import { useFavorites } from "../../src/context/FavoritesContext";
 import { useMealPlan } from "../../src/context/MealPlanContext";
+import { useTheme } from "../../src/context/ThemeContext";
 
 const TAB_ITEMS = [
   { name: "index", title: "Explore", iconActive: "compass", iconInactive: "compass-outline" },
@@ -14,6 +15,7 @@ const TAB_ITEMS = [
 ] as const;
 
 function CustomTabBar({ state, descriptors, navigation }: any) {
+  const { colors } = useTheme();
   const { favorites = [] } = useFavorites();
   const { meals = [] } = useMealPlan();
   const insets = useSafeAreaInsets();
@@ -22,9 +24,8 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
 
   return (
     <View style={StyleSheet.flatten([styles.tabBarWrapper, { paddingBottom: Math.max(insets.bottom, 8) }])}>
-      <View style={styles.tabBarContainer}>
-        {/* Glass background */}
-        <View style={styles.tabBarGlass} />
+      <View style={[styles.tabBarContainer, { borderColor: colors.borderLight }]}>
+        <View style={[styles.tabBarGlass, { backgroundColor: colors.tabBarBg, borderColor: colors.borderLight }]} />
         
         <View style={styles.tabBarInner}>
           {state.routes.map((route: any, index: number) => {
@@ -57,18 +58,18 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
                 <Animated.View
                   style={StyleSheet.flatten([
                     styles.tabContent,
-                    isFocused && styles.tabContentActive,
+                    isFocused && { backgroundColor: colors.primaryLight },
                   ])}
                 >
                   <View style={styles.iconWrapper}>
                     <Ionicons
                       name={iconName as any}
                       size={20}
-                      color={isFocused ? COLORS.primary : COLORS.textMuted}
+                      color={isFocused ? colors.primary : colors.textMuted}
                     />
                     {showBadge && (
-                      <View style={styles.badge}>
-                        <Text style={styles.badgeText}>
+                      <View style={[styles.badge, { backgroundColor: colors.error, borderColor: colors.surface }]}>
+                        <Text style={[styles.badgeText, { color: colors.text }]}>
                           {badgeCount > 9 ? "9+" : badgeCount}
                         </Text>
                       </View>
@@ -77,7 +78,8 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
                   <Text
                     style={StyleSheet.flatten([
                       styles.tabLabel,
-                      isFocused && styles.tabLabelActive,
+                      { color: colors.textMuted },
+                      isFocused && { color: colors.primary, fontWeight: "700" },
                     ])}
                   >
                     {tab.title}
@@ -124,9 +126,7 @@ const styles = StyleSheet.create({
   },
   tabBarGlass: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(22, 22, 24, 0.92)",
     borderWidth: 1,
-    borderColor: COLORS.borderLight,
     borderRadius: RADIUS.xxl,
   },
   tabBarInner: {
@@ -147,9 +147,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.m,
     borderRadius: RADIUS.l,
   },
-  tabContentActive: {
-    backgroundColor: COLORS.primaryLight,
-  },
   iconWrapper: {
     position: "relative",
     marginBottom: 2,
@@ -157,18 +154,12 @@ const styles = StyleSheet.create({
   tabLabel: {
     fontSize: 10,
     fontWeight: "600",
-    color: COLORS.textMuted,
     letterSpacing: 0.3,
-  },
-  tabLabelActive: {
-    color: COLORS.primary,
-    fontWeight: "700",
   },
   badge: {
     position: "absolute",
     top: -4,
     right: -8,
-    backgroundColor: COLORS.error,
     borderRadius: 8,
     minWidth: 16,
     height: 16,
@@ -176,11 +167,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 4,
     borderWidth: 1.5,
-    borderColor: COLORS.surface,
   },
   badgeText: {
     fontSize: 9,
     fontWeight: "bold",
-    color: COLORS.text,
   },
 });

@@ -1,14 +1,13 @@
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { Image } from "expo-image";
-import { LinearGradient } from "expo-linear-gradient";
 import { Link } from "expo-router";
 import React from "react";
 import { Dimensions, Pressable, StyleSheet, Text, View } from "react-native";
-import Animated, { FadeInDown } from "react-native-reanimated";
 import { RecipeImages } from "../../constants/recipe-images";
-import { COLORS, FONTS, RADIUS, SHADOWS, SPACING } from "../../constants/theme";
+import { FONTS, RADIUS, SHADOWS, SPACING } from "../../constants/theme";
 import { useFavorites } from "../../context/FavoritesContext";
+import { useTheme } from "../../context/ThemeContext";
 import { Recipe } from "../../types";
 
 const { width } = Dimensions.get("window");
@@ -19,13 +18,13 @@ export type RecipeSummary = Pick<Recipe, "id" | "title" | "isVeg"> & {
   metadata: { prepTimeMinutes: number; difficulty: string; calories: number };
 };
 
-const DifficultyBadge = ({ difficulty }: { difficulty: string }) => {
+const DifficultyBadge = ({ difficulty, colors }: { difficulty: string; colors: any }) => {
   const getColor = () => {
     switch (difficulty) {
-      case "Easy": return COLORS.secondary;
-      case "Medium": return COLORS.primary;
-      case "Hard": return COLORS.error;
-      default: return COLORS.textMuted;
+      case "Easy": return colors.secondary;
+      case "Medium": return colors.primary;
+      case "Hard": return colors.error;
+      default: return colors.textMuted;
     }
   };
   const color = getColor();
@@ -37,8 +36,8 @@ const DifficultyBadge = ({ difficulty }: { difficulty: string }) => {
   );
 };
 
-const VegIndicator = ({ isVeg }: { isVeg: boolean }) => {
-  const color = isVeg ? COLORS.veg : COLORS.nonVeg;
+const VegIndicator = ({ isVeg, colors }: { isVeg: boolean; colors: any }) => {
+  const color = isVeg ? colors.veg : colors.nonVeg;
   return (
     <View style={[styles.vegContainer, { borderColor: color }]}>
       <View style={[styles.vegDot, { backgroundColor: color }]} />
@@ -59,14 +58,14 @@ const RecipeCard = React.memo(
     containerStyle?: any;
   }) => {
     const { toggleFavorite, isFavorite } = useFavorites();
+    const { colors } = useTheme();
     const favorited = isFavorite(recipe.id);
 
     return (
       <Link href={`/recipe/${recipe.id}`} asChild>
         <Pressable style={StyleSheet.flatten([styles.container, containerStyle])}>
-          <Animated.View
-            entering={FadeInDown.delay(index * 80).duration(500).springify()}
-            style={styles.inner}
+          <View
+            style={[styles.inner, { backgroundColor: colors.card, borderColor: colors.border }]}
           >
             {/* Image */}
             <View style={styles.imageContainer}>
@@ -76,14 +75,10 @@ const RecipeCard = React.memo(
                 contentFit="cover"
                 transition={400}
               />
-              {/* Gradient overlay for readability */}
-              <LinearGradient
-                colors={["transparent", "rgba(0,0,0,0.6)"]}
-                style={styles.imageGradient}
-              />
-              
+              <View style={[styles.imageGradient, { backgroundColor: "rgba(0,0,0,0.4)" }]} />
+
               {/* Veg indicator */}
-              <VegIndicator isVeg={recipe.isVeg} />
+              <VegIndicator isVeg={recipe.isVeg} colors={colors} />
 
               {/* Favorite Button */}
               <Pressable
@@ -98,14 +93,13 @@ const RecipeCard = React.memo(
                 <Ionicons
                   name={favorited ? "heart" : "heart-outline"}
                   size={18}
-                  color={favorited ? COLORS.error : "rgba(255,255,255,0.85)"}
+                  color={favorited ? colors.error : "rgba(255,255,255,0.85)"}
                 />
               </Pressable>
 
-              {/* Time badge on image */}
               <View style={styles.timeBadge}>
-                <Ionicons name="time-outline" size={11} color={COLORS.text} />
-                <Text style={styles.timeBadgeText}>
+                <Ionicons name="time-outline" size={11} color="#F5F0EB" />
+                <Text style={[styles.timeBadgeText, { color: "#F5F0EB" }]}>
                   {recipe.metadata.prepTimeMinutes}m
                 </Text>
               </View>
@@ -113,19 +107,19 @@ const RecipeCard = React.memo(
 
             {/* Content */}
             <View style={styles.content}>
-              <Text style={styles.title} numberOfLines={1}>
+              <Text style={[styles.title, { color: colors.text }]} numberOfLines={1}>
                 {recipe.title}
               </Text>
               <View style={styles.footer}>
-                <DifficultyBadge difficulty={recipe.metadata.difficulty} />
+                <DifficultyBadge difficulty={recipe.metadata.difficulty} colors={colors} />
                 {!horizontal && (
-                  <Text style={styles.calories}>
+                  <Text style={[styles.calories, { color: colors.textMuted }]}>
                     {recipe.metadata.calories} cal
                   </Text>
                 )}
               </View>
             </View>
-          </Animated.View>
+          </View>
         </Pressable>
       </Link>
     );
@@ -142,11 +136,9 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.m,
   },
   inner: {
-    backgroundColor: COLORS.card,
     borderRadius: RADIUS.l,
     overflow: "hidden",
     borderWidth: 1,
-    borderColor: COLORS.border,
     ...SHADOWS.small,
   },
   imageContainer: {
@@ -195,7 +187,6 @@ const styles = StyleSheet.create({
   timeBadgeText: {
     fontSize: 11,
     fontWeight: "700",
-    color: COLORS.text,
     fontFamily: FONTS.mono,
   },
   content: {
@@ -204,7 +195,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 14,
     fontWeight: "700",
-    color: COLORS.text,
     lineHeight: 18,
     marginBottom: SPACING.xs + 2,
     letterSpacing: -0.2,
@@ -235,7 +225,7 @@ const styles = StyleSheet.create({
   calories: {
     fontSize: 10,
     fontWeight: "600",
-    color: COLORS.textMuted,
+    
     fontFamily: FONTS.mono,
   },
   vegContainer: {

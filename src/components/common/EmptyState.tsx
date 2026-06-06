@@ -1,8 +1,8 @@
 import React from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { COLORS, SPACING, RADIUS, FONTS } from "../../constants/theme";
-import Animated, { FadeIn, FadeInUp } from "react-native-reanimated";
+import { SPACING, RADIUS, FONTS } from "../../constants/theme";
+import { useTheme } from "../../context/ThemeContext";
 
 interface EmptyStateProps {
   icon: keyof typeof Ionicons.glyphMap;
@@ -19,37 +19,34 @@ export default function EmptyState({
   actionLabel,
   onAction,
 }: EmptyStateProps) {
+  const { colors } = useTheme();
   return (
-    <Animated.View
-      entering={FadeIn.duration(600)}
-      style={styles.container}
-    >
-      <Animated.View
-        entering={FadeInUp.delay(200).duration(500).springify()}
-        style={styles.iconCircle}
+    <View style={styles.container}>
+      <View
+        style={[styles.iconCircle, { backgroundColor: colors.elevated, borderColor: colors.border }]}
       >
-        <View style={styles.iconInner}>
-          <Ionicons name={icon} size={40} color={COLORS.primary} />
+        <View style={[styles.iconInner, { backgroundColor: colors.primaryLight }]}>
+          <Ionicons name={icon} size={40} color={colors.primary} />
         </View>
-      </Animated.View>
+      </View>
 
-      <Animated.View entering={FadeInUp.delay(300).duration(500)}>
-        <Text style={styles.title}>{title}</Text>
-      </Animated.View>
+      <View>
+        <Text style={[styles.title, { color: colors.text }]}>{title}</Text>
+      </View>
 
-      <Animated.View entering={FadeInUp.delay(400).duration(500)}>
-        <Text style={styles.description}>{description}</Text>
-      </Animated.View>
+      <View>
+        <Text style={[styles.description, { color: colors.textSecondary }]}>{description}</Text>
+      </View>
 
       {actionLabel && onAction && (
-        <Animated.View entering={FadeInUp.delay(500).duration(500)}>
-          <Pressable style={styles.actionBtn} onPress={onAction}>
-            <Text style={styles.actionText}>{actionLabel}</Text>
-            <Ionicons name="arrow-forward" size={16} color={COLORS.text} />
+        <View>
+          <Pressable style={[styles.actionBtn, { backgroundColor: colors.primary }]} onPress={onAction}>
+            <Text style={[styles.actionText, { color: colors.inverseText }]}>{actionLabel}</Text>
+            <Ionicons name="arrow-forward" size={16} color={colors.inverseText} />
           </Pressable>
-        </Animated.View>
+        </View>
       )}
-    </Animated.View>
+    </View>
   );
 }
 
@@ -65,32 +62,27 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: COLORS.elevated,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: SPACING.l,
     borderWidth: 1,
-    borderColor: COLORS.border,
   },
   iconInner: {
     width: 70,
     height: 70,
     borderRadius: 35,
-    backgroundColor: COLORS.primaryLight,
     alignItems: "center",
     justifyContent: "center",
   },
   title: {
     fontSize: 22,
     fontWeight: "700",
-    color: COLORS.text,
     textAlign: "center",
     marginBottom: SPACING.s,
     fontFamily: FONTS.serif,
   },
   description: {
     fontSize: 14,
-    color: COLORS.textSecondary,
     textAlign: "center",
     lineHeight: 22,
     marginBottom: SPACING.xl,
@@ -99,14 +91,12 @@ const styles = StyleSheet.create({
   actionBtn: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: COLORS.primary,
     paddingHorizontal: SPACING.xl,
     paddingVertical: SPACING.m,
     borderRadius: RADIUS.l,
     gap: SPACING.s,
   },
   actionText: {
-    color: COLORS.text,
     fontSize: 15,
     fontWeight: "700",
   },

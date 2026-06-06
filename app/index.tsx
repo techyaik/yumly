@@ -1,12 +1,12 @@
 import { Ionicons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import {
+  BackHandler,
   Dimensions,
-  Image,
   KeyboardAvoidingView,
   Platform,
+  Pressable,
   ScrollView,
   StatusBar,
   StyleSheet,
@@ -16,25 +16,21 @@ import {
   View
 } from "react-native";
 import Animated, {
-  Easing,
   runOnJS,
   useAnimatedStyle,
   useSharedValue,
-  withRepeat,
   withTiming
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { COLORS, FONTS, RADIUS, SPACING } from "../src/constants/theme";
+import { FONTS, RADIUS, SHADOWS, SPACING } from "../src/constants/theme";
+import { useTheme } from "../src/context/ThemeContext";
 import { useUser } from "../src/context/UserContext";
 
 const { width } = Dimensions.get("window");
 
-// --- Sub-components ---
-
-// --- Main Screen ---
-
 export default function OnboardingScreen() {
   const router = useRouter();
+  const { colors, mode } = useTheme();
   const {
     onboardingComplete,
     setName: setGlobalName,
@@ -45,7 +41,6 @@ export default function OnboardingScreen() {
   const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // Transitions
   const screenOpacity = useSharedValue(1);
   const screenTranslateX = useSharedValue(0);
 
@@ -55,26 +50,44 @@ export default function OnboardingScreen() {
     }
   }, [onboardingComplete, isUserLoading, router]);
 
-  const switchStep = useCallback(
-    (nextStep: number) => {
-      screenOpacity.value = withTiming(0, { duration: 300 }, () => {
-        screenTranslateX.value = 50;
+  const animateToStep = useCallback(
+    (nextStep: number, direction: "forward" | "back" = "forward") => {
+      const offset = direction === "forward" ? 40 : -40;
+      screenOpacity.value = withTiming(0, { duration: 250 }, () => {
+        screenTranslateX.value = offset;
         runOnJS(setStep)(nextStep);
-        screenTranslateX.value = withTiming(0, { duration: 400 });
-        screenOpacity.value = withTiming(1, { duration: 400 });
+        screenTranslateX.value = withTiming(0, { duration: 350 });
+        screenOpacity.value = withTiming(1, { duration: 350 });
       });
     },
     [screenOpacity, screenTranslateX]
   );
 
+  const handleBackStep = useCallback(() => {
+    if (step > 1) {
+      animateToStep(step - 1, "back");
+    }
+  }, [step, animateToStep]);
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
+      if (step > 1) {
+        handleBackStep();
+        return true;
+      }
+      return false;
+    });
+    return () => backHandler.remove();
+  }, [step, handleBackStep]);
+
   const handleNextStep = () => {
-    if (step === 1) switchStep(2);
+    if (step === 1) animateToStep(2);
     else if (step === 2 && name.length >= 2) {
       setIsLoading(true);
       setTimeout(() => {
         setIsLoading(false);
         setGlobalName(name);
-        switchStep(3);
+        animateToStep(3);
       }, 1200);
     }
   };
@@ -92,152 +105,109 @@ export default function OnboardingScreen() {
   if (isUserLoading)
     return (
       <SafeAreaView
-        style={[styles.container, { backgroundColor: COLORS.background }]}
+        style={[styles.container, { backgroundColor: colors.background }]}
         edges={["top", "bottom", "left", "right"]}
       />
     );
 
   return (
-    <SafeAreaView style={styles.container} edges={["top", "bottom", "left", "right"]}>
-      <StatusBar barStyle="light-content" />
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={["top", "bottom", "left", "right"]}>
+      <StatusBar barStyle={mode === "dark" ? "light-content" : "dark-content"} />
+
+      {/* Header row: back button + progress dots — stays fixed above keyboard */}
+      <View style={styles.topBar}>
+        <View style={styles.backBtnSlot}>
+          {step > 1 && (
+            <Pressable
+              onPress={handleBackStep}
+              style={[styles.backBtn, { backgroundColor: colors.elevated, borderColor: colors.border }]}
+            >
+              <Ionicons name="chevron-back" size={20} color={colors.text} />
+            </Pressable>
+          )}
+        </View>
+        <View style={styles.dotsRow}>
+          <View style={[styles.progressDot, { backgroundColor: step >= 1 ? colors.primary : colors.bg3 }]} />
+          <View style={[styles.progressDot, { backgroundColor: step >= 2 ? colors.primary : colors.bg3 }]} />
+          <View style={[styles.progressDot, { backgroundColor: step >= 3 ? colors.primary : colors.bg3 }]} />
+        </View>
+        <View style={styles.backBtnSlot} />
+      </View>
 
       <KeyboardAvoidingView
         style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        behavior={Platform.OS === "ios" ? "position" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
       >
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-          bounces={false}
-          keyboardShouldPersistTaps="handled"
-        >
-          {/* Logo */}
-          <View style={styles.logoContainer}>
-            <Image
-              source={require('../assets/images/Logo.png')}
-              style={{ width: 50, height: 50 }}
-              resizeMode="contain"
+        <Animated.View style={[styles.screenWrapper, animatedScreenStyle]}>
+          {step === 1 && <StepOne onNext={handleNextStep} colors={colors} />}
+          {step === 2 && (
+            <StepTwo
+              name={name}
+              setName={setName}
+              onNext={handleNextStep}
+              isLoading={isLoading}
+              colors={colors}
             />
-          </View>
-
-          <Animated.View style={[styles.screenWrapper, animatedScreenStyle]}>
-            {step === 1 && <StepOne onNext={handleNextStep} />}
-            {step === 2 && (
-              <StepTwo
-                name={name}
-                setName={setName}
-                onNext={handleNextStep}
-                isLoading={isLoading}
-              />
-            )}
-            {step === 3 && (
-              <StepThree name={name} onExplore={handleExplore} />
-            )}
-          </Animated.View>
-        </ScrollView>
+          )}
+          {step === 3 && (
+            <StepThree name={name} onExplore={handleExplore} colors={colors} />
+          )}
+        </Animated.View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
 
-// --- Step Views ---
-
-const StepOne = ({ onNext }: { onNext: () => void }) => {
-  const rotate = useSharedValue(0);
-  const pulse = useSharedValue(1);
-
-  useEffect(() => {
-    rotate.value = withRepeat(
-      withTiming(360, { duration: 20000, easing: Easing.linear }),
-      -1,
-      false
-    );
-    pulse.value = withRepeat(
-      withTiming(1.03, {
-        duration: 4000,
-        easing: Easing.inOut(Easing.ease),
-      }),
-      -1,
-      true
-    );
-  }, [pulse, rotate]);
-
-  const plateAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: pulse.value }],
-  }));
-
-  const ringAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ rotate: `${rotate.value}deg` }],
-  }));
-
-  const reverseRingStyle = useAnimatedStyle(() => ({
-    transform: [{ rotate: `${-rotate.value * 0.6}deg` }],
-  }));
-
+const StepOne = ({ onNext, colors }: { onNext: () => void; colors: any }) => {
   return (
     <View style={styles.stepContent}>
-      {/* Hero */}
       <View style={styles.heroArea}>
         <View style={styles.plateWrap}>
-          <Animated.View style={[styles.plateRing2, reverseRingStyle]} />
-          <Animated.View style={[styles.plateRing, ringAnimatedStyle]}>
-            <View style={styles.ringDot} />
-          </Animated.View>
-          <Animated.View style={[styles.plateCircle, plateAnimatedStyle]}>
-            <Text style={{ fontSize: 72 }}>🍳</Text>
-            <View style={[styles.orbitBadge, styles.badge1]}>
-              <View style={styles.badgeDot} />
-              <Text style={styles.badgeText}>200+ recipes</Text>
+          <View style={[styles.plateRing2, { borderColor: `${colors.primary}08` }]} />
+          <View style={[styles.plateRing, { borderColor: `${colors.primary}15` }]}>
+            <View style={[styles.ringDot, { backgroundColor: colors.primary }]} />
+          </View>
+          <View style={[styles.plateCircle, { backgroundColor: colors.surface, borderColor: `${colors.primary}15` }]}>
+            <Ionicons name="restaurant-outline" size={44} color={colors.primary} />
+            <View style={[styles.orbitBadge, { backgroundColor: colors.elevated, borderColor: `${colors.primary}25` }, styles.badge1]}>
+              <View style={[styles.badgeDot, { backgroundColor: colors.primary }]} />
+              <Text style={[styles.badgeText, { color: colors.primary }]}>200+ recipes</Text>
             </View>
-            <View style={[styles.orbitBadge, styles.badge2]}>
-              <View style={styles.badgeDot} />
-              <Text style={styles.badgeText}>Step-by-step</Text>
+            <View style={[styles.orbitBadge, { backgroundColor: colors.elevated, borderColor: `${colors.primary}25` }, styles.badge2]}>
+              <View style={[styles.badgeDot, { backgroundColor: colors.primary }]} />
+              <Text style={[styles.badgeText, { color: colors.primary }]}>Step-by-step</Text>
             </View>
-          </Animated.View>
+          </View>
         </View>
       </View>
 
-      {/* Bottom Content */}
       <View style={styles.bottomContent}>
-        <View style={styles.slideDots}>
-          <View style={[styles.dot, styles.activeDot]} />
-          <View style={styles.dot} />
-          <View style={styles.dot} />
-        </View>
-        <Text style={styles.headline}>
+        <Text style={[styles.headline, { color: colors.text }]}>
           Cook with{" "}
-          <Text style={styles.accentText}>passion,</Text>
+          <Text style={{ color: colors.primary }}>passion,</Text>
           {"\n"}eat with joy.
         </Text>
-        <Text style={styles.subheadline}>
-          Discover hundreds of recipes with guided cooking, timers, and smart
-          meal planning.
+        <Text style={[styles.subheadline, { color: colors.textSecondary }]}>
+          Discover hundreds of recipes with guided cooking, timers, and smart meal planning.
         </Text>
 
         <TouchableOpacity
           style={styles.mainBtn}
           onPress={onNext}
-          activeOpacity={0.8}
+          activeOpacity={0.85}
         >
-          <LinearGradient
-            colors={[COLORS.primary, COLORS.primaryDark]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.gradientBtn}
-          >
-            <Text style={styles.mainBtnText}>Get Started</Text>
-            <View style={styles.btnArrow}>
-              <Ionicons name="arrow-forward" size={16} color="#1A0E04" />
-            </View>
-          </LinearGradient>
+          <View style={[styles.solidBtn, { backgroundColor: colors.primary }]}>
+            <Text style={[styles.mainBtnText, { color: colors.inverseText }]}>Get Started</Text>
+          </View>
         </TouchableOpacity>
 
-        <View style={styles.signinRow}>
-          <Text style={styles.signinText}>Already have an account? </Text>
-          <TouchableOpacity>
-            <Text style={styles.signinLink}>Sign in</Text>
-          </TouchableOpacity>
-        </View>
+        {/* <View style={styles.signinRow}>
+          <Text style={[styles.signinText, { color: colors.textMuted }]}>Already have an account? </Text>
+          <Pressable>
+            <Text style={[styles.signinLink, { color: colors.primary }]}>Sign in</Text>
+          </Pressable>
+        </View> */}
       </View>
     </View>
   );
@@ -248,419 +218,358 @@ const StepTwo = ({
   setName,
   onNext,
   isLoading,
+  colors,
 }: {
   name: string;
   setName: (name: string) => void;
   onNext: () => void;
   isLoading: boolean;
+  colors: any;
 }) => {
   return (
-    <View style={styles.stepContent}>
-      <View style={styles.s2Top}>
-        <LinearGradient
-          colors={[COLORS.surface, COLORS.background]}
-          style={StyleSheet.absoluteFill}
-        />
+    <ScrollView
+      style={styles.stepContent}
+      contentContainerStyle={styles.stepScrollContent}
+      keyboardShouldPersistTaps="handled"
+      showsVerticalScrollIndicator={false}
+      bounces={false}
+    >
+      <View style={[styles.s2Top, { backgroundColor: colors.surface }]}>
         <View style={styles.welcomeIconWrap}>
-          <View style={styles.welcomeBowl}>
-            <Text style={{ fontSize: 44 }}>👨‍🍳</Text>
+          <View style={[styles.welcomeBowl, { backgroundColor: colors.card, borderColor: `${colors.primary}15` }]}>
+            <Ionicons name="person-outline" size={30} color={colors.primary} />
           </View>
         </View>
       </View>
 
-      <View style={styles.s2Content}>
-        <Text style={styles.s2Label}>QUICK SETUP</Text>
-        <Text style={styles.s2Title}>
+      <View style={[styles.s2Content, { backgroundColor: colors.background }]}>
+        <Text style={[styles.s2Label, { color: colors.primary }]}>QUICK SETUP</Text>
+        <Text style={[styles.s2Title, { color: colors.text }]}>
           What should{"\n"}we call you?
         </Text>
-        <Text style={styles.s2Sub}>
-          We{"'"}ll personalize your entire food journey around your
-          preferences.
+        <Text style={[styles.s2Sub, { color: colors.textSecondary }]}>
+          We{"'"}ll personalize your entire food journey around your preferences.
         </Text>
 
         <View style={styles.inputGroup}>
-          <Text style={styles.inputLabel}>YOUR FIRST NAME</Text>
-          <View style={styles.inputWrap}>
-            <TextInput
-              style={styles.nameInput}
-              placeholder="e.g. Alex, Priya, Marco..."
-              placeholderTextColor={COLORS.textMuted}
-              value={name}
-              onChangeText={setName}
-              autoFocus
-              selectionColor={COLORS.primary}
-            />
-          </View>
+          <Text style={[styles.inputLabel, { color: colors.textMuted }]}>YOUR FIRST NAME</Text>
+          <TextInput
+            style={[styles.nameInput, { backgroundColor: colors.elevated, borderColor: colors.border, color: colors.text }]}
+            placeholder="e.g. Alex, Priya, Marco..."
+            placeholderTextColor={colors.textMuted}
+            value={name}
+            onChangeText={setName}
+            autoFocus
+            selectionColor={colors.primary}
+            returnKeyType="next"
+            onSubmitEditing={() => name.length >= 2 && onNext()}
+          />
         </View>
 
         <TouchableOpacity
-          style={[
-            styles.continueBtn,
-            (name.length < 2 || isLoading) && styles.btnDisabled,
-          ]}
+          style={[styles.continueBtn, (name.length < 2 || isLoading) && styles.btnDisabled]}
           onPress={onNext}
           disabled={name.length < 2 || isLoading}
-          activeOpacity={0.8}
+          activeOpacity={0.85}
         >
-          <LinearGradient
-            colors={[COLORS.primary, COLORS.primaryDark]}
-            style={styles.gradientBtn}
-          >
+          <View style={[styles.solidBtn, { backgroundColor: colors.primary }]}>
             {isLoading ? (
               <View style={styles.loadingDots}>
-                <View style={styles.loadingDot} />
-                <View style={styles.loadingDot} />
-                <View style={styles.loadingDot} />
+                <View style={[styles.loadingDot, { backgroundColor: colors.inverseText }]} />
+                <View style={[styles.loadingDot, { backgroundColor: colors.inverseText }]} />
+                <View style={[styles.loadingDot, { backgroundColor: colors.inverseText }]} />
               </View>
             ) : (
-              <Text style={styles.mainBtnText}>Let{"'"}s Cook →</Text>
+              <Text style={[styles.mainBtnText, { color: colors.inverseText }]}>Let{"'"}s Cook</Text>
             )}
-          </LinearGradient>
+          </View>
         </TouchableOpacity>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
 const StepThree = ({
   name,
   onExplore,
+  colors,
 }: {
   name: string;
   onExplore: () => void;
+  colors: any;
 }) => {
   const capName = name.charAt(0).toUpperCase() + name.slice(1);
 
   return (
-    <View style={styles.stepContent}>
+    <ScrollView
+      style={styles.stepContent}
+      contentContainerStyle={styles.stepScrollContent}
+      showsVerticalScrollIndicator={false}
+      bounces={false}
+    >
       <View style={styles.welcomeAnim}>
-        <View style={styles.wPlate}>
-          <Text style={{ fontSize: 52 }}>🍽️</Text>
+        <View style={[styles.wPlate, { backgroundColor: colors.surface, borderColor: `${colors.primary}15` }]}>
+          <Ionicons name="checkmark-circle" size={38} color={colors.primary} />
         </View>
-        <View style={styles.checkmark}>
-          <Ionicons name="checkmark" size={18} color="#1A0E04" />
+        <View style={[styles.checkmark, { backgroundColor: colors.primary, borderColor: colors.background }]}>
+          <Ionicons name="checkmark" size={14} color={colors.inverseText} />
         </View>
       </View>
 
-      <Text style={styles.welcomeName}>
+      <Text style={[styles.welcomeName, { color: colors.text }]}>
         Welcome,{"\n"}
-        <Text style={styles.accentText}>{capName || "Chef"}!</Text>
+        <Text style={{ color: colors.primary }}>{capName || "Chef"}!</Text>
       </Text>
-      <Text style={styles.welcomeTagline}>
-        Your culinary journey begins now. Discover, cook, and savour every
-        moment.
+      <Text style={[styles.welcomeTagline, { color: colors.textSecondary }]}>
+        Your culinary journey begins now. Discover, cook, and savour every moment.
       </Text>
 
       <View style={styles.featureGrid}>
-        <FeatureCard
-          emoji="🔍"
-          title="Explore Recipes"
-          desc="200+ curated dishes"
-        />
-        <FeatureCard
-          emoji="🍳"
-          title="Guided Cooking"
-          desc="Step-by-step mode"
-        />
-        <FeatureCard
-          emoji="🥗"
-          title="Meal Planner"
-          desc="Plan your meals"
-        />
-        <FeatureCard
-          emoji="⏱️"
-          title="Smart Timers"
-          desc="Built-in timers"
-        />
+        <FeatureCard icon="search-outline" title="Explore Recipes" desc="200+ curated dishes" colors={colors} />
+        <FeatureCard icon="restaurant-outline" title="Guided Cooking" desc="Step-by-step mode" colors={colors} />
+        <FeatureCard icon="calendar-outline" title="Meal Planner" desc="Plan your meals" colors={colors} />
+        <FeatureCard icon="timer-outline" title="Smart Timers" desc="Built-in timers" colors={colors} />
       </View>
 
       <TouchableOpacity
         style={styles.exploreBtn}
         onPress={onExplore}
-        activeOpacity={0.8}
+        activeOpacity={0.85}
       >
-        <LinearGradient
-          colors={[COLORS.primary, COLORS.primaryDark]}
-          style={styles.gradientBtn}
-        >
-          <Text style={styles.mainBtnText}>Explore Yumly</Text>
-          <Ionicons name="arrow-forward" size={18} color="#1A0E04" />
-        </LinearGradient>
+        <View style={[styles.solidBtn, { backgroundColor: colors.primary }]}>
+          <Text style={[styles.mainBtnText, { color: colors.inverseText }]}>Explore Yumly</Text>
+        </View>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 };
 
 const FeatureCard = ({
-  emoji,
+  icon,
   title,
   desc,
+  colors,
 }: {
-  emoji: string;
+  icon: keyof typeof Ionicons.glyphMap;
   title: string;
   desc: string;
+  colors: any;
 }) => (
-  <View style={styles.featCard}>
-    <Text style={styles.featEmoji}>{emoji}</Text>
-    <Text style={styles.featTitle}>{title}</Text>
-    <Text style={styles.featDesc}>{desc}</Text>
+  <View style={[styles.featCard, { backgroundColor: colors.card, borderColor: colors.border }, SHADOWS.small]}>
+    <View style={[styles.featIconWrap, { backgroundColor: colors.primaryLight }]}>
+      <Ionicons name={icon} size={18} color={colors.primary} />
+    </View>
+    <Text style={[styles.featTitle, { color: colors.text }]}>{title}</Text>
+    <Text style={[styles.featDesc, { color: colors.textMuted }]}>{desc}</Text>
   </View>
 );
-
-// --- Styles ---
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
-  },
-  scrollContent: {
-    flexGrow: 1,
   },
   screenWrapper: {
     flex: 1,
   },
   stepContent: {
     flex: 1,
+  },
+  stepScrollContent: {
+    flexGrow: 1,
     alignItems: "center",
     justifyContent: "center",
   },
-  // Step 1
-  logoContainer: {
-    position: "absolute",
-    top: SPACING.m,
-    left: 0,
-    right: 0,
+  backBtnSlot: {
+    width: 40,
+    height: 40,
+  },
+  backBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
-    height: 50,
-    zIndex: 10,
+    borderWidth: 1,
   },
-  Row: {
+  topBar: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: SPACING.m,
+    paddingTop: SPACING.s,
+    paddingBottom: SPACING.xs,
+  },
+  dotsRow: {
+    flexDirection: "row",
     gap: 8,
   },
-  Text: {
-    fontSize: 28,
-    fontFamily: FONTS.serif,
-    color: COLORS.primary,
-    fontWeight: "700",
-    letterSpacing: 1,
+  progressDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
   },
   heroArea: {
-    height: 380,
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 40,
+    maxHeight: 300,
   },
   plateWrap: {
-    width: 220,
-    height: 220,
+    width: 170,
+    height: 170,
     justifyContent: "center",
     alignItems: "center",
   },
   plateRing: {
     position: "absolute",
-    width: 260,
-    height: 260,
-    borderRadius: 130,
-    borderWidth: 1,
-    borderColor: "rgba(232,168,56,0.12)",
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    borderWidth: 1.5,
   },
   plateRing2: {
     position: "absolute",
-    width: 300,
-    height: 300,
-    borderRadius: 150,
-    borderWidth: 1,
-    borderColor: "rgba(232,168,56,0.05)",
+    width: 230,
+    height: 230,
+    borderRadius: 115,
+    borderWidth: 1.5,
     borderStyle: "dashed",
   },
   ringDot: {
     position: "absolute",
-    top: -4,
+    top: -5,
     left: "50%",
-    width: 8,
-    height: 8,
-    backgroundColor: COLORS.primary,
-    borderRadius: 4,
-    shadowColor: COLORS.primary,
-    shadowRadius: 10,
-    shadowOpacity: 1,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
   },
   plateCircle: {
-    width: 220,
-    height: 220,
-    borderRadius: 110,
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: "rgba(232,168,56,0.12)",
+    width: 170,
+    height: 170,
+    borderRadius: 85,
+    borderWidth: 1.5,
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: COLORS.primary,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.1,
-    shadowRadius: 40,
   },
   orbitBadge: {
     position: "absolute",
-    backgroundColor: COLORS.elevated,
     borderWidth: 1,
-    borderColor: "rgba(232,168,56,0.2)",
-    borderRadius: 20,
+    borderRadius: RADIUS.full,
     paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingVertical: 5,
     flexDirection: "row",
     alignItems: "center",
-    gap: 5,
+    gap: 6,
   },
-  badge1: { top: -10, right: -20 },
-  badge2: { bottom: 20, left: -30 },
+  badge1: { top: -12, right: -20 },
+  badge2: { bottom: 18, left: -30 },
   badgeDot: {
-    width: 5,
-    height: 5,
-    borderRadius: 2.5,
-    backgroundColor: COLORS.primary,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
   },
   badgeText: {
-    color: COLORS.primary,
     fontSize: 11,
     fontWeight: "600",
   },
   bottomContent: {
     width: "100%",
-    paddingHorizontal: 32,
-    paddingBottom: 40,
-    marginTop: "auto",
+    paddingHorizontal: SPACING.m,
+    paddingBottom: SPACING.l,
   },
-  slideDots: {
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: 6,
-    marginBottom: 32,
-  },
-  dot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: COLORS.textMuted,
-  },
-  activeDot: { width: 24, backgroundColor: COLORS.primary },
   headline: {
-    fontSize: 40,
-    fontWeight: "600",
-    color: COLORS.text,
-    lineHeight: 44,
-    marginBottom: 14,
+    fontSize: 30,
+    fontWeight: "700",
+    lineHeight: 36,
+    marginBottom: 10,
     fontFamily: FONTS.serif,
   },
-  accentText: { color: COLORS.primary },
   subheadline: {
     fontSize: 14,
-    color: COLORS.textSecondary,
-    lineHeight: 22,
-    marginBottom: 32,
+    lineHeight: 21,
+    marginBottom: 28,
   },
   mainBtn: {
     width: "100%",
     borderRadius: RADIUS.l,
     overflow: "hidden",
   },
-  gradientBtn: {
-    paddingVertical: 18,
+  solidBtn: {
+    paddingVertical: 16,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: 8,
   },
   mainBtnText: {
-    color: "#1A0E04",
     fontSize: 16,
     fontWeight: "800",
-  },
-  btnArrow: {
-    width: 24,
-    height: 24,
-    backgroundColor: "rgba(26,14,4,0.1)",
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
+    letterSpacing: 0.3,
   },
   signinRow: {
     flexDirection: "row",
     justifyContent: "center",
     marginTop: 20,
   },
-  signinText: { color: COLORS.textMuted, fontSize: 13 },
-  signinLink: { color: COLORS.primary, fontSize: 13, fontWeight: "600" },
-  // Step 2
+  signinText: { fontSize: 13 },
+  signinLink: { fontSize: 13, fontWeight: "700" },
   s2Top: {
     width: "100%",
-    height: 300,
+    height: 220,
     justifyContent: "center",
     alignItems: "center",
   },
-  welcomeIconWrap: { marginTop: 40 },
+  welcomeIconWrap: {
+    marginTop: 10,
+  },
   welcomeBowl: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: "rgba(232,168,56,0.12)",
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    borderWidth: 1.5,
     alignItems: "center",
     justifyContent: "center",
+    ...SHADOWS.small,
   },
   s2Content: {
     flex: 1,
     width: "100%",
-    backgroundColor: COLORS.background,
     borderTopLeftRadius: RADIUS.xxl,
     borderTopRightRadius: RADIUS.xxl,
-    marginTop: -36,
-    padding: 32,
+    marginTop: -30,
+    padding: SPACING.m,
   },
   s2Label: {
-    color: COLORS.primary,
     fontSize: 10,
     fontWeight: "800",
-    letterSpacing: 2,
-    marginBottom: 10,
+    letterSpacing: 2.5,
+    marginBottom: 8,
     fontFamily: FONTS.mono,
   },
   s2Title: {
-    fontSize: 34,
-    fontWeight: "600",
-    color: COLORS.text,
-    lineHeight: 38,
-    marginBottom: 10,
+    fontSize: 26,
+    fontWeight: "700",
+    lineHeight: 32,
+    marginBottom: 8,
     fontFamily: FONTS.serif,
   },
   s2Sub: {
     fontSize: 14,
-    color: COLORS.textSecondary,
-    lineHeight: 22,
-    marginBottom: 36,
+    lineHeight: 21,
+    marginBottom: 28,
   },
-  inputGroup: { marginBottom: 14 },
+  inputGroup: { marginBottom: 18 },
   inputLabel: {
     fontSize: 10,
-    color: COLORS.textMuted,
     fontWeight: "700",
-    marginBottom: 10,
+    marginBottom: 8,
     letterSpacing: 1.5,
     fontFamily: FONTS.mono,
   },
-  inputWrap: { flexDirection: "row", alignItems: "center" },
   nameInput: {
-    flex: 1,
-    backgroundColor: COLORS.elevated,
-    borderWidth: 1,
-    borderColor: COLORS.border,
+    borderWidth: 1.5,
     borderRadius: RADIUS.l,
     padding: 16,
-    color: COLORS.text,
     fontSize: 16,
   },
   continueBtn: {
@@ -669,80 +578,78 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   btnDisabled: { opacity: 0.4 },
-  loadingDots: { flexDirection: "row", gap: 5 },
+  loadingDots: { flexDirection: "row", gap: 6 },
   loadingDot: {
     width: 7,
     height: 7,
     borderRadius: 3.5,
-    backgroundColor: "#1A0E04",
   },
-  // Step 3
-  welcomeAnim: { marginBottom: 32, position: "relative" },
+  welcomeAnim: { marginBottom: 24, position: "relative" },
   wPlate: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    backgroundColor: COLORS.surface,
-    borderWidth: 1.5,
-    borderColor: "rgba(232,168,56,0.12)",
+    width: 88,
+    height: 88,
+    borderRadius: 44,
+    borderWidth: 2,
     alignItems: "center",
     justifyContent: "center",
+    ...SHADOWS.small,
   },
   checkmark: {
     position: "absolute",
     bottom: 0,
-    right: 0,
-    width: 34,
-    height: 34,
-    backgroundColor: COLORS.primary,
-    borderRadius: 17,
+    right: -4,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
     borderWidth: 3,
-    borderColor: COLORS.background,
     alignItems: "center",
     justifyContent: "center",
   },
   welcomeName: {
-    fontSize: 38,
-    fontWeight: "600",
-    color: COLORS.text,
+    fontSize: 28,
+    fontWeight: "700",
     textAlign: "center",
     fontFamily: FONTS.serif,
-    marginBottom: 12,
+    marginBottom: 10,
   },
   welcomeTagline: {
     fontSize: 14,
-    color: COLORS.textSecondary,
     textAlign: "center",
-    lineHeight: 22,
-    marginBottom: 44,
-    paddingHorizontal: 20,
+    lineHeight: 21,
+    marginBottom: 28,
+    paddingHorizontal: SPACING.l,
   },
   featureGrid: {
     width: "100%",
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 10,
-    paddingHorizontal: 32,
-    marginBottom: 40,
+    paddingHorizontal: SPACING.m,
+    marginBottom: 28,
   },
   featCard: {
-    width: (width - 64 - 10) / 2,
-    backgroundColor: COLORS.card,
+    width: (width - SPACING.m * 2 - 10) / 2,
     borderWidth: 1,
-    borderColor: COLORS.border,
     borderRadius: RADIUS.l,
-    padding: 16,
+    padding: 14,
   },
-  featEmoji: { fontSize: 24, marginBottom: 8 },
+  featIconWrap: {
+    width: 36,
+    height: 36,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 10,
+  },
+  featIcon: { marginBottom: 0 },
   featTitle: {
-    color: COLORS.text,
     fontSize: 13,
-    fontWeight: "600",
+    fontWeight: "700",
     marginBottom: 3,
   },
-  featDesc: { color: COLORS.textMuted, fontSize: 11 },
+  featDesc: { fontSize: 11 },
   exploreBtn: {
-    width: width - 64,
+    width: width - SPACING.m * 2,
     borderRadius: RADIUS.l,
     overflow: "hidden",
   },

@@ -3,8 +3,8 @@ import { useAudioPlayer } from "expo-audio";
 import * as Haptics from "expo-haptics";
 import React, { useEffect, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { COLORS, RADIUS, SPACING, FONTS } from "../../constants/theme";
-import { LinearGradient } from "expo-linear-gradient";
+import { RADIUS, SPACING, FONTS } from "../../constants/theme";
+import { useTheme } from "../../context/ThemeContext";
 
 const alertSound = require("../../../assets/sounds/alert.wav");
 const successSound = require("../../../assets/sounds/success.wav");
@@ -23,6 +23,7 @@ export default function InstructionStep({
   readOnly = false,
 }: Props) {
   const [timeLeft, setTimeLeft] = useState(timerSeconds || 0);
+  const { colors } = useTheme();
   const [isActive, setIsActive] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
   const player = useAudioPlayer(alertSound, { downloadFirst: true });
@@ -49,7 +50,7 @@ export default function InstructionStep({
   );
 
   useEffect(() => {
-    let interval: number | null = null;
+    let interval: ReturnType<typeof setInterval> | null = null;
     if (isActive && timeLeft > 0) {
       interval = setInterval(() => {
         setTimeLeft((prev) => {
@@ -93,23 +94,23 @@ export default function InstructionStep({
   };
 
   return (
-    <View style={[styles.container, isCompleted && styles.containerCompleted]}>
+    <View style={[styles.container, { backgroundColor: colors.card, borderColor: colors.border }, isCompleted && { backgroundColor: colors.elevated, opacity: 0.7 }]}>
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <View
             style={[
-              styles.stepBadge,
-              isCompleted && styles.stepBadgeCompleted,
+              styles.stepBadge, { backgroundColor: colors.primaryLight, borderColor: colors.borderAccent },
+              isCompleted && { backgroundColor: colors.success, borderColor: colors.success },
             ]}
           >
             {isCompleted ? (
               <Ionicons name="checkmark" size={12} color="white" />
             ) : (
-              <Text style={styles.stepText}>{step}</Text>
+              <Text style={[styles.stepText, { color: colors.primary }]}>{step}</Text>
             )}
           </View>
           <Text
-            style={[styles.title, isCompleted && styles.textCompleted]}
+            style={[styles.title, { color: colors.text }, isCompleted && { color: colors.textMuted, textDecorationLine: "line-through" }]}
           >
             Step {step}
           </Text>
@@ -117,54 +118,46 @@ export default function InstructionStep({
 
         {!readOnly && (
           <Pressable
-            style={[
-              styles.completeToggle,
-              isCompleted && styles.completeToggleActive,
-            ]}
+            style={styles.completeToggle}
             onPress={toggleComplete}
           >
             <Ionicons
               name={isCompleted ? "checkmark-circle" : "ellipse-outline"}
               size={22}
-              color={isCompleted ? COLORS.success : COLORS.textMuted}
+              color={isCompleted ? colors.success : colors.textMuted}
             />
           </Pressable>
         )}
       </View>
 
       <Text
-        style={[styles.instructionText, isCompleted && styles.textCompleted]}
+        style={[styles.instructionText, { color: colors.text }, isCompleted && { color: colors.textMuted, textDecorationLine: "line-through" }]}
       >
         {text}
       </Text>
 
       {timerSeconds && !isCompleted && !readOnly && (
         <Pressable
-          style={[styles.timerButton, isActive && styles.timerActive]}
+          style={[styles.timerButton, isActive && { backgroundColor: colors.elevated, borderWidth: 1, borderColor: colors.border }]}
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
             setIsActive(!isActive);
           }}
         >
           {isActive ? (
-            <View style={styles.timerBtnContent}>
-              <Ionicons name="pause" size={16} color={COLORS.text} />
-              <Text style={styles.timerBtnText}>
+            <View style={[styles.timerBtnContent, { backgroundColor: colors.elevated }]}>
+              <Ionicons name="pause" size={16} color={colors.text} />
+              <Text style={[styles.timerBtnText, { color: colors.text }]}>
                 Pause ({formatTime(timeLeft)})
               </Text>
             </View>
           ) : (
-            <LinearGradient
-              colors={[COLORS.primary, COLORS.primaryDark]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.timerBtnContent}
-            >
-              <Ionicons name="timer-outline" size={16} color="#1A0E04" />
-              <Text style={[styles.timerBtnText, { color: "#1A0E04" }]}>
+            <View style={[styles.timerBtnContent, { backgroundColor: colors.primary }]}>
+              <Ionicons name="timer-outline" size={16} color={colors.inverseText} />
+              <Text style={[styles.timerBtnText, { color: colors.inverseText }]}>
                 Start Timer ({formatTime(timerSeconds)})
               </Text>
-            </LinearGradient>
+            </View>
           )}
         </Pressable>
       )}
@@ -173,34 +166,28 @@ export default function InstructionStep({
 }
 
 export function ReadOnlyInstructionStep({ step, text }: { step: number; text: string }) {
+  const { colors } = useTheme();
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.card, borderColor: colors.border }]}>
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <View style={styles.stepBadge}>
-            <Text style={styles.stepText}>{step}</Text>
+          <View style={[styles.stepBadge, { backgroundColor: colors.primaryLight, borderColor: colors.borderAccent }]}>
+            <Text style={[styles.stepText, { color: colors.primary }]}>{step}</Text>
           </View>
-          <Text style={styles.title}>Step {step}</Text>
+          <Text style={[styles.title, { color: colors.text }]}>Step {step}</Text>
         </View>
       </View>
-      <Text style={[styles.instructionText, { marginBottom: 0 }]}>{text}</Text>
+      <Text style={[styles.instructionText, { marginBottom: 0, color: colors.text }]}>{text}</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: COLORS.card,
     borderRadius: RADIUS.l,
     padding: SPACING.m,
     marginBottom: SPACING.m,
     borderWidth: 1,
-    borderColor: COLORS.border,
-  },
-  containerCompleted: {
-    backgroundColor: COLORS.elevated,
-    borderColor: COLORS.border,
-    opacity: 0.7,
   },
   header: {
     flexDirection: "row",
@@ -217,18 +204,11 @@ const styles = StyleSheet.create({
     width: 26,
     height: 26,
     borderRadius: 13,
-    backgroundColor: COLORS.primaryLight,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: COLORS.borderAccent,
-  },
-  stepBadgeCompleted: {
-    backgroundColor: COLORS.success,
-    borderColor: COLORS.success,
   },
   stepText: {
-    color: COLORS.primary,
     fontSize: 12,
     fontWeight: "800",
     fontFamily: FONTS.mono,
@@ -236,32 +216,18 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 14,
     fontWeight: "700",
-    color: COLORS.text,
   },
   completeToggle: {
     padding: 2,
   },
-  completeToggleActive: {
-    opacity: 1,
-  },
   instructionText: {
     fontSize: 14,
-    color: COLORS.text,
     lineHeight: 22,
     marginBottom: SPACING.m,
-  },
-  textCompleted: {
-    textDecorationLine: "line-through",
-    color: COLORS.textMuted,
   },
   timerButton: {
     borderRadius: RADIUS.m,
     overflow: "hidden",
-  },
-  timerActive: {
-    backgroundColor: COLORS.elevated,
-    borderWidth: 1,
-    borderColor: COLORS.border,
   },
   timerBtnContent: {
     flexDirection: "row",
@@ -271,7 +237,6 @@ const styles = StyleSheet.create({
     gap: SPACING.s,
   },
   timerBtnText: {
-    color: COLORS.text,
     fontWeight: "700",
     fontSize: 13,
     fontFamily: FONTS.mono,

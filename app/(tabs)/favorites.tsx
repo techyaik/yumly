@@ -1,13 +1,13 @@
 import { useRouter } from "expo-router";
 import React from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import EmptyState from "../../src/components/common/EmptyState";
 import RecipeListItem from "../../src/components/recipe/RecipeListItem";
 import SwipeableRow from "../../src/components/recipe/SwipeableRow";
-import { COLORS, FONTS, RADIUS, SPACING } from "../../src/constants/theme";
+import { FONTS, RADIUS, SPACING } from "../../src/constants/theme";
 import { useFavorites } from "../../src/context/FavoritesContext";
+import { useTheme } from "../../src/context/ThemeContext";
 import recipesData from "../../src/data/recipes.json";
 import { Recipe } from "../../src/types";
 
@@ -15,6 +15,7 @@ const recipes = recipesData as Recipe[];
 
 export default function FavoritesScreen() {
   const { favorites, toggleFavorite } = useFavorites();
+  const { colors } = useTheme();
   const router = useRouter();
 
   const favoriteRecipes = recipes.filter((recipe) =>
@@ -22,21 +23,20 @@ export default function FavoritesScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
-      <Animated.View
-        entering={FadeIn.duration(500)}
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={["top", "left", "right"]}>
+      <View
         style={styles.header}
       >
         <View>
-          <Text style={styles.headerLabel}>YOUR COLLECTION</Text>
-          <Text style={styles.headerTitle}>Saved Recipes</Text>
+          <Text style={[styles.headerLabel, { color: colors.primary }]}>YOUR COLLECTION</Text>
+          <Text style={[styles.headerTitle, { color: colors.text }]}>Saved Recipes</Text>
         </View>
         {favoriteRecipes.length > 0 && (
-          <View style={styles.countBadge}>
-            <Text style={styles.countText}>{favoriteRecipes.length}</Text>
+          <View style={[styles.countBadge, { backgroundColor: colors.primaryLight, borderColor: colors.borderAccent }]}>
+            <Text style={[styles.countText, { color: colors.primary }]}>{favoriteRecipes.length}</Text>
           </View>
         )}
-      </Animated.View>
+      </View>
 
       {favoriteRecipes.length > 0 ? (
         <ScrollView
@@ -45,16 +45,13 @@ export default function FavoritesScreen() {
         >
           <View style={styles.list}>
             {favoriteRecipes.map((recipe, index) => (
-              <Animated.View
-                key={recipe.id}
-                entering={FadeInDown.delay(index * 60).duration(400)}
-              >
+              <View key={recipe.id}>
                 <SwipeableRow
                   onDelete={() => toggleFavorite(recipe.id)}
                 >
                   <RecipeListItem recipe={recipe} index={index} />
                 </SwipeableRow>
-              </Animated.View>
+              </View>
             ))}
           </View>
           <View style={styles.footerSpacer} />
@@ -75,7 +72,6 @@ export default function FavoritesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
   },
   header: {
     paddingHorizontal: SPACING.m,
@@ -87,7 +83,6 @@ const styles = StyleSheet.create({
   headerLabel: {
     fontSize: 10,
     fontWeight: "800",
-    color: COLORS.primary,
     letterSpacing: 2,
     marginBottom: 4,
     fontFamily: FONTS.mono,
@@ -95,22 +90,18 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 28,
     fontWeight: "700",
-    color: COLORS.text,
     fontFamily: FONTS.serif,
   },
   countBadge: {
-    backgroundColor: COLORS.primaryLight,
     paddingHorizontal: SPACING.m,
     paddingVertical: SPACING.xs + 2,
     borderRadius: RADIUS.full,
     borderWidth: 1,
-    borderColor: COLORS.borderAccent,
     marginBottom: 4,
   },
   countText: {
     fontSize: 14,
     fontWeight: "800",
-    color: COLORS.primary,
     fontFamily: FONTS.mono,
   },
   scrollContent: {

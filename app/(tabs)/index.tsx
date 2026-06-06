@@ -1,25 +1,22 @@
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   FlatList,
-  Image,
-  KeyboardAvoidingView,
-  Platform,
   Pressable,
   StatusBar,
   StyleSheet,
   Text,
   View
 } from "react-native";
-import Animated, { FadeIn, FadeInDown, FadeOut } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import EmptyState from "../../src/components/common/EmptyState";
 import CategoryBar from "../../src/components/recipe/CategoryBar";
 import FeaturedCarousel from "../../src/components/recipe/FeaturedCarousel";
 import RecipeCard from "../../src/components/recipe/RecipeCard";
 import SearchBar from "../../src/components/recipe/SearchBar";
-import { COLORS, FONTS, RADIUS, SPACING } from "../../src/constants/theme";
+import { FONTS, RADIUS, SPACING } from "../../src/constants/theme";
+import { useTheme } from "../../src/context/ThemeContext";
 import { useUser } from "../../src/context/UserContext";
 import recipesData from "../../src/data/recipes.json";
 import { useDebounce } from "../../src/hooks/useDebounce";
@@ -49,6 +46,7 @@ const getTimeGreeting = () => {
 
 export default function HomeScreen() {
   const { name } = useUser();
+  const { colors, toggleMode, mode } = useTheme();
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -80,15 +78,13 @@ export default function HomeScreen() {
     }
   };
 
-  const removeRecentSearch = async (query: string) => {
-    const updated = recentSearches.filter(s => s !== query);
-    setRecentSearches(updated);
-    try {
-      await AsyncStorage.setItem("recent_searches", JSON.stringify(updated));
-    } catch (e) {
-      console.warn("Failed to save recent searches", e);
-    }
-  };
+  const removeRecentSearch = useCallback(async (query: string) => {
+    setRecentSearches((prev) => {
+      const updated = prev.filter(s => s !== query);
+      AsyncStorage.setItem("recent_searches", JSON.stringify(updated)).catch(() => {});
+      return updated;
+    });
+  }, []);
 
   const greeting = getTimeGreeting();
 
@@ -129,48 +125,8 @@ export default function HomeScreen() {
 
   const isSearching = debouncedSearchQuery.trim().length > 0;
 
-  const renderHeader = () => (
+  const renderHeader = useCallback(() => (
     <View style={styles.headerContent}>
-      {/* Header */}
-      <Animated.View
-        entering={FadeIn.duration(600)}
-        style={styles.header}
-      >
-        <View style={styles.headerTitleRow}>
-          <View style={styles.logoContainer}>
-            <Image 
-              source={require('../../assets/images/Logo.png')} 
-              style={{ width: 44, height: 44 }} 
-              resizeMode="contain" 
-            />
-          </View>
-        </View>
-
-        <Animated.View
-          entering={FadeInDown.delay(200).duration(500)}
-          style={styles.greetingSection}
-        >
-          <View style={styles.greetingRow}>
-            <Text style={styles.greetingEmoji}>{greeting.emoji}</Text>
-            <Text style={styles.greeting}>
-              {greeting.text}, {name || "Chef"}
-            </Text>
-          </View>
-          <Text style={styles.subGreeting}>
-            What would you{"\n"}like to cook?
-          </Text>
-        </Animated.View>
-      </Animated.View>
-
-      {/* Search Bar */}
-      <SearchBar
-        value={searchQuery}
-        onChangeText={setSearchQuery}
-        onFocus={() => setIsSearchFocused(true)}
-        onBlur={() => setIsSearchFocused(false)}
-        onSubmitEditing={() => addToRecentSearches(searchQuery)}
-      />
-
       {/* Featured Carousel - only show when not searching */}
       {!isSearching && !isSearchFocused && selectedCategory === "All" && (
         <FeaturedCarousel recipes={featuredRecipes} />
@@ -190,14 +146,14 @@ export default function HomeScreen() {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.quickList}
             renderItem={({ item, index }) => (
-              <Animated.View entering={FadeInDown.delay(index * 100)}>
+              <View>
                 <RecipeCard
                   recipe={item}
                   index={index}
                   horizontal
                   containerStyle={styles.quickCard}
                 />
-              </Animated.View>
+              </View>
             )}
           />
         </View>
@@ -223,65 +179,88 @@ export default function HomeScreen() {
 
       {/* Recent Searches */}
       {isSearchFocused && searchQuery.length === 0 && recentSearches.length > 0 && (
-        <Animated.View
-          entering={FadeIn.duration(300)}
-          exiting={FadeOut.duration(200)}
-          style={styles.recentSearches}
-        >
+        <View style={styles.recentSearches}>
           <View style={styles.sectionHeaderRow}>
             <Text style={styles.sectionLabel}>RECENT SEARCHES</Text>
             <Pressable onPress={() => {
               setRecentSearches([]);
               AsyncStorage.removeItem("recent_searches");
             }}>
-              <Text style={styles.clearAllText}>Clear All</Text>
+              <Text style={[styles.clearAllText, { color: colors.error }]}>Clear All</Text>
             </Pressable>
           </View>
           <View style={styles.recentChips}>
             {recentSearches.map((query) => (
-              <View key={query} style={styles.recentChip}>
+              <View key={query} style={[styles.recentChip, { backgroundColor: colors.elevated, borderColor: colors.border }]}>
                 <Pressable
                   style={styles.recentChipContent}
                   onPress={() => setSearchQuery(query)}
                 >
-                  <Ionicons name="time-outline" size={14} color={COLORS.textMuted} />
-                  <Text style={styles.recentText}>{query}</Text>
+                  <Ionicons name="time-outline" size={14} color={colors.textMuted} />
+                  <Text style={[styles.recentText, { color: colors.textSecondary }]}>{query}</Text>
                 </Pressable>
                 <Pressable
                   onPress={() => removeRecentSearch(query)}
                   style={styles.removeRecent}
                 >
-                  <Ionicons name="close" size={14} color={COLORS.textMuted} />
+                  <Ionicons name="close" size={14} color={colors.textMuted} />
                 </Pressable>
               </View>
             ))}
           </View>
-        </Animated.View>
+        </View>
       )}
     </View>
-  );
+  ), [colors, isSearching, isSearchFocused, selectedCategory, recentSearches, featuredRecipes, quickRecipes, filteredRecipes.length, removeRecentSearch, setSearchQuery, setSelectedCategory, searchQuery.length]);
 
-  const renderEmpty = () => (
+  const renderEmpty = useCallback(() => (
     <EmptyState
       icon="search-outline"
       title="No Recipes Found"
       description={`We couldn't find any recipes matching "${searchQuery}" in ${selectedCategory === "All" ? "any category" : selectedCategory}.`}
     />
-  );
+  ), [searchQuery, selectedCategory]);
+
+  const renderItem = useCallback(({ item, index }: { item: Recipe; index: number }) => (
+    <RecipeCard recipe={item} index={index} />
+  ), []);
 
   return (
-    <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
-      <StatusBar barStyle="light-content" />
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-      >
-        <FlatList
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={["top", "left", "right"]}>
+      <StatusBar barStyle={mode === "dark" ? "light-content" : "dark-content"} />
+      <View style={styles.header}>
+        <View style={styles.headerTitleRow}>
+          <Text style={[styles.greeting, { color: colors.primary }]}>
+            {greeting.text}, {name || "Chef"}
+          </Text>
+          <Pressable
+            onPress={toggleMode}
+            style={[styles.themeToggle, { backgroundColor: colors.elevated, borderColor: colors.border }]}
+          >
+            <Ionicons
+              name={mode === "system" ? "settings-outline" : mode === "dark" ? "moon-outline" : "sunny-outline"}
+              size={18}
+              color={colors.primary}
+            />
+          </Pressable>
+        </View>
+        <View style={styles.greetingSection}>
+          <Text style={[styles.subGreeting, { color: colors.text }]}>
+            What would you{"\n"}like to cook?
+          </Text>
+        </View>
+      </View>
+      <SearchBar
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+        onFocus={() => setIsSearchFocused(true)}
+        onBlur={() => setIsSearchFocused(false)}
+        onSubmitEditing={() => addToRecentSearches(searchQuery)}
+      />
+      <FlatList
         data={filteredRecipes}
         keyExtractor={(item) => item.id}
-        renderItem={({ item, index }) => (
-          <RecipeCard recipe={item} index={index} />
-        )}
+        renderItem={renderItem}
         numColumns={2}
         ListHeaderComponent={renderHeader}
         ListEmptyComponent={renderEmpty}
@@ -295,7 +274,6 @@ export default function HomeScreen() {
         ListFooterComponent={<View style={styles.footerSpacer} />}
         keyboardShouldPersistTaps="handled"
       />
-      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -303,7 +281,6 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
   },
   listContent: {
     paddingTop: SPACING.s,
@@ -324,37 +301,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: SPACING.m,
   },
-  logoContainer: {
-    alignItems: "flex-start",
-    justifyContent: "center",
-    height: 44,
-  },
-  Row: {
-    flexDirection: "row",
+  themeToggle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     alignItems: "center",
-    gap: 6,
-  },
-  Text: {
-    fontSize: 22,
-    fontFamily: FONTS.serif,
-    color: COLORS.primary,
-    fontWeight: "700",
-    letterSpacing: 1,
-  },
-  rankBadge: {
-    backgroundColor: COLORS.primaryLight,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
+    justifyContent: "center",
     borderWidth: 1,
-    borderColor: COLORS.borderAccent,
-  },
-  rankText: {
-    fontSize: 9,
-    fontWeight: "900",
-    color: COLORS.primary,
-    fontFamily: FONTS.mono,
-    letterSpacing: 0.5,
   },
   quickSection: {
     marginTop: SPACING.l,
@@ -372,31 +325,20 @@ const styles = StyleSheet.create({
   sectionValue: {
     fontSize: 10,
     fontWeight: "700",
-    color: COLORS.primary,
     fontFamily: FONTS.mono,
   },
   greetingSection: {
     marginTop: SPACING.xs,
-  },
-  greetingRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    marginBottom: 6,
-  },
-  greetingEmoji: {
-    fontSize: 16,
+    marginBottom: SPACING.s,
   },
   greeting: {
     fontSize: 14,
     fontWeight: "600",
-    color: COLORS.primary,
     letterSpacing: 0.2,
   },
   subGreeting: {
     fontSize: 30,
     fontWeight: "700",
-    color: COLORS.text,
     lineHeight: 36,
     fontFamily: FONTS.serif,
     letterSpacing: -0.5,
@@ -413,14 +355,12 @@ const styles = StyleSheet.create({
   sectionLabel: {
     fontSize: 10,
     fontWeight: "800",
-    color: COLORS.textMuted,
     letterSpacing: 2,
     fontFamily: FONTS.mono,
   },
   recipeCount: {
     fontSize: 11,
     fontWeight: "600",
-    color: COLORS.textMuted,
     fontFamily: FONTS.mono,
   },
   recentSearches: {
@@ -436,10 +376,8 @@ const styles = StyleSheet.create({
   recentChip: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: COLORS.elevated,
     borderRadius: RADIUS.m,
     borderWidth: 1,
-    borderColor: COLORS.border,
     paddingLeft: 10,
     paddingRight: 4,
     height: 34,
@@ -452,7 +390,6 @@ const styles = StyleSheet.create({
   },
   recentText: {
     fontSize: 13,
-    color: COLORS.textSecondary,
     fontWeight: "500",
   },
   removeRecent: {
@@ -461,7 +398,6 @@ const styles = StyleSheet.create({
   clearAllText: {
     fontSize: 10,
     fontWeight: "700",
-    color: COLORS.error,
     fontFamily: FONTS.mono,
   },
   footerSpacer: {
