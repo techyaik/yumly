@@ -13,7 +13,6 @@
     },
     "android": {
       "package": "com.aik.yumly",
-      "versionCode": 1,
       "permissions": [],
       "adaptiveIcon": {
         "backgroundColor": "#0E0E10",
