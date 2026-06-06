@@ -12,6 +12,7 @@ const TAB_ITEMS = [
   { name: "index", title: "Explore", iconActive: "compass", iconInactive: "compass-outline" },
   { name: "favorites", title: "Saved", iconActive: "bookmark", iconInactive: "bookmark-outline" },
   { name: "mealplan", title: "Kitchen", iconActive: "flame", iconInactive: "flame-outline" },
+  { name: "settings", title: "Settings", iconActive: "cog", iconInactive: "cog-outline" },
 ] as const;
 
 function CustomTabBar({ state, descriptors, navigation }: any) {
@@ -105,6 +106,7 @@ export default function TabsLayout() {
       <Tabs.Screen name="index" />
       <Tabs.Screen name="favorites" />
       <Tabs.Screen name="mealplan" />
+      <Tabs.Screen name="settings" />
     </Tabs>
   );
 }

@@ -46,7 +46,7 @@ const getTimeGreeting = () => {
 
 export default function HomeScreen() {
   const { name } = useUser();
-  const { colors, toggleMode, mode } = useTheme();
+  const { colors, mode } = useTheme();
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -233,16 +233,6 @@ export default function HomeScreen() {
           <Text style={[styles.greeting, { color: colors.primary }]}>
             {greeting.text}, {name || "Chef"}
           </Text>
-          <Pressable
-            onPress={toggleMode}
-            style={[styles.themeToggle, { backgroundColor: colors.elevated, borderColor: colors.border }]}
-          >
-            <Ionicons
-              name={mode === "system" ? "settings-outline" : mode === "dark" ? "moon-outline" : "sunny-outline"}
-              size={18}
-              color={colors.primary}
-            />
-          </Pressable>
         </View>
         <View style={styles.greetingSection}>
           <Text style={[styles.subGreeting, { color: colors.text }]}>
@@ -301,13 +291,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: SPACING.m,
   },
-  themeToggle: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
+  greetingSection: {
+    marginTop: SPACING.xs,
+    marginBottom: SPACING.s,
+  },
+  greeting: {
+    fontSize: 14,
+    fontWeight: "600",
+    letterSpacing: 0.2,
+  },
+  subGreeting: {
+    fontSize: 30,
+    fontWeight: "700",
+    lineHeight: 36,
+    fontFamily: FONTS.serif,
+    letterSpacing: -0.5,
   },
   quickSection: {
     marginTop: SPACING.l,
@@ -326,22 +324,6 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: "700",
     fontFamily: FONTS.mono,
-  },
-  greetingSection: {
-    marginTop: SPACING.xs,
-    marginBottom: SPACING.s,
-  },
-  greeting: {
-    fontSize: 14,
-    fontWeight: "600",
-    letterSpacing: 0.2,
-  },
-  subGreeting: {
-    fontSize: 30,
-    fontWeight: "700",
-    lineHeight: 36,
-    fontFamily: FONTS.serif,
-    letterSpacing: -0.5,
   },
   categoriesSection: {
     marginTop: SPACING.s,

@@ -9,6 +9,7 @@ interface ThemeContextType {
   mode: ThemeMode;
   colors: ThemeColors;
   toggleMode: () => void;
+  setMode: (mode: ThemeMode) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -47,13 +48,22 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
+  const selectMode = async (m: ThemeMode) => {
+    setMode(m);
+    try {
+      await AsyncStorage.setItem("theme_mode", m);
+    } catch {
+      // ignore
+    }
+  };
+
   const effectiveScheme = mode === "system" ? (systemScheme ?? "dark") : mode;
   const colors: ThemeColors = effectiveScheme === "dark" ? dark : light;
 
   if (isLoading) return null;
 
   return (
-    <ThemeContext.Provider value={{ mode, colors, toggleMode }}>
+    <ThemeContext.Provider value={{ mode, colors, toggleMode, setMode: selectMode }}>
       {children}
     </ThemeContext.Provider>
   );
