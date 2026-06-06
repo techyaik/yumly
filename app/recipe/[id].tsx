@@ -16,7 +16,7 @@ import {
 } from "react-native";
 import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
 import IngredientList from "../../src/components/recipe/IngredientList";
-import InstructionStep from "../../src/components/recipe/InstructionStep";
+import { ReadOnlyInstructionStep } from "../../src/components/recipe/InstructionStep";
 import { RecipeImages } from "../../src/constants/recipe-images";
 import { COLORS, FONTS, RADIUS, SHADOWS, SPACING } from "../../src/constants/theme";
 import { useFavorites } from "../../src/context/FavoritesContext";
@@ -259,12 +259,10 @@ export default function RecipeDetailScreen() {
             </Pressable>
             {instructionsExpanded &&
               recipe.instructions.map((step) => (
-                <InstructionStep
+                <ReadOnlyInstructionStep
                   key={step.step}
                   step={step.step}
                   text={step.text}
-                  timerSeconds={step.timerSeconds}
-                  readOnly={true}
                 />
               ))}
           </View>

@@ -3,6 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useMemo, useState } from "react";
 import {
   FlatList,
+  Image,
   Pressable,
   StatusBar,
   StyleSheet,
@@ -12,7 +13,6 @@ import {
 import Animated, { FadeIn, FadeInDown, FadeOut } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import EmptyState from "../../src/components/common/EmptyState";
-import SpatulaIcon from "../../src/components/common/SpatulaIcon";
 import CategoryBar from "../../src/components/recipe/CategoryBar";
 import FeaturedCarousel from "../../src/components/recipe/FeaturedCarousel";
 import RecipeCard from "../../src/components/recipe/RecipeCard";
@@ -68,7 +68,7 @@ export default function HomeScreen() {
   const addToRecentSearches = async (query: string) => {
     const cleanQuery = query.trim();
     if (!cleanQuery) return;
-    
+
     const updated = [cleanQuery, ...recentSearches.filter(s => s !== cleanQuery)].slice(0, 5);
     setRecentSearches(updated);
     try {
@@ -136,11 +136,11 @@ export default function HomeScreen() {
       >
         <View style={styles.headerTitleRow}>
           <View style={styles.logoContainer}>
-            <View style={styles.logoRow}>
-              <Ionicons name="restaurant-outline" size={20} color={COLORS.primary} />
-              <Text style={styles.logoText}>yuml</Text>
-              <SpatulaIcon size={20} color={COLORS.primary} />
-            </View>
+            <Image 
+              source={require('../../assets/images/Logo.png')} 
+              style={{ width: 44, height: 44 }} 
+              resizeMode="contain" 
+            />
           </View>
         </View>
 
@@ -161,9 +161,9 @@ export default function HomeScreen() {
       </Animated.View>
 
       {/* Search Bar */}
-      <SearchBar 
-        value={searchQuery} 
-        onChangeText={setSearchQuery} 
+      <SearchBar
+        value={searchQuery}
+        onChangeText={setSearchQuery}
         onFocus={() => setIsSearchFocused(true)}
         onBlur={() => setIsSearchFocused(false)}
         onSubmitEditing={() => addToRecentSearches(searchQuery)}
@@ -189,11 +189,11 @@ export default function HomeScreen() {
             contentContainerStyle={styles.quickList}
             renderItem={({ item, index }) => (
               <Animated.View entering={FadeInDown.delay(index * 100)}>
-                <RecipeCard 
-                  recipe={item} 
-                  index={index} 
-                  horizontal 
-                  containerStyle={styles.quickCard} 
+                <RecipeCard
+                  recipe={item}
+                  index={index}
+                  horizontal
+                  containerStyle={styles.quickCard}
                 />
               </Animated.View>
             )}
@@ -221,8 +221,8 @@ export default function HomeScreen() {
 
       {/* Recent Searches */}
       {isSearchFocused && searchQuery.length === 0 && recentSearches.length > 0 && (
-        <Animated.View 
-          entering={FadeIn.duration(300)} 
+        <Animated.View
+          entering={FadeIn.duration(300)}
           exiting={FadeOut.duration(200)}
           style={styles.recentSearches}
         >
@@ -238,14 +238,14 @@ export default function HomeScreen() {
           <View style={styles.recentChips}>
             {recentSearches.map((query) => (
               <View key={query} style={styles.recentChip}>
-                <Pressable 
+                <Pressable
                   style={styles.recentChipContent}
                   onPress={() => setSearchQuery(query)}
                 >
                   <Ionicons name="time-outline" size={14} color={COLORS.textMuted} />
                   <Text style={styles.recentText}>{query}</Text>
                 </Pressable>
-                <Pressable 
+                <Pressable
                   onPress={() => removeRecentSearch(query)}
                   style={styles.removeRecent}
                 >
@@ -319,14 +319,14 @@ const styles = StyleSheet.create({
   logoContainer: {
     alignItems: "flex-start",
     justifyContent: "center",
-    height: 40,
+    height: 44,
   },
-  logoRow: {
+  Row: {
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
   },
-  logoText: {
+  Text: {
     fontSize: 22,
     fontFamily: FONTS.serif,
     color: COLORS.primary,

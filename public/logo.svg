@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 120" fill="none">
-  <!-- Logo mark: A fork and spoon forming a smile -->
+  <!--  mark: A fork and spoon forming a smile -->
   <g transform="translate(10, 10)">
     <!-- Fork -->
     <path d="M24 8C24 5 22 3 20 3C18 3 16 5 16 8V28C16 30 14 32 12 32C10 32 8 30 8 28V8C8 5 6 3 4 3C2 3 0 5 0 8V32C0 38 5 42 12 42C19 42 24 38 24 32V8Z" fill="#FF6B35"/>

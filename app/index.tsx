@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   Dimensions,
+  Image,
   Platform,
   StatusBar,
   StyleSheet,
@@ -14,13 +15,12 @@ import {
 } from "react-native";
 import Animated, {
   Easing,
+  runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
   withTiming
 } from "react-native-reanimated";
-import { scheduleOnRN } from "react-native-worklets";
-import SpatulaIcon from "../src/components/common/SpatulaIcon";
 import { COLORS, FONTS, RADIUS } from "../src/constants/theme";
 import { useUser } from "../src/context/UserContext";
 
@@ -56,7 +56,7 @@ export default function OnboardingScreen() {
     (nextStep: number) => {
       screenOpacity.value = withTiming(0, { duration: 300 }, () => {
         screenTranslateX.value = 50;
-        scheduleOnRN(setStep, nextStep);
+        runOnJS(setStep)(nextStep);
         screenTranslateX.value = withTiming(0, { duration: 400 });
         screenOpacity.value = withTiming(1, { duration: 400 });
       });
@@ -99,11 +99,11 @@ export default function OnboardingScreen() {
 
       {/* Logo */}
       <View style={styles.logoContainer}>
-        <View style={styles.logoRow}>
-          <Ionicons name="restaurant-outline" size={24} color={COLORS.primary} />
-          <Text style={styles.logoText}>yuml</Text>
-          <SpatulaIcon size={24} color={COLORS.primary} />
-        </View>
+        <Image 
+          source={require('../assets/images/Logo.png')} 
+          style={{ width: 50, height: 50 }} 
+          resizeMode="contain" 
+        />
       </View>
 
       <Animated.View style={[styles.screenWrapper, animatedScreenStyle]}>
@@ -409,20 +409,20 @@ const styles = StyleSheet.create({
   // Step 1
   logoContainer: {
     position: "absolute",
-    top: Platform.OS === "ios" ? 50 : 40,
+    top: Platform.OS === "ios" ? 60 : 50,
     left: 0,
     right: 0,
     alignItems: "center",
     justifyContent: "center",
-    height: 60,
+    height: 50,
     zIndex: 10,
   },
-  logoRow: {
+  Row: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
   },
-  logoText: {
+  Text: {
     fontSize: 28,
     fontFamily: FONTS.serif,
     color: COLORS.primary,

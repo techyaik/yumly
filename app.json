@@ -4,26 +4,27 @@
     "slug": "yumly",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/Logo.png",
     "scheme": "yumly",
     "userInterfaceStyle": "automatic",
-    "jsEngine": "hermes",
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.aik.yumly"
     },
     "android": {
       "package": "com.aik.yumly",
+      "versionCode": 1,
+      "permissions": [],
       "adaptiveIcon": {
         "backgroundColor": "#0E0E10",
-        "foregroundImage": "./assets/images/icon.png"
+        "foregroundImage": "./assets/images/Logo.png"
       },
       "predictiveBackGestureEnabled": false
     },
     "runtimeVersion": "1.0.0",
     "web": {
       "output": "static",
-      "favicon": "./assets/images/favicon.png",
+      "favicon": "./assets/images/Logo.png",
       "baseUrl": "/yumly"
     },
     "plugins": [
@@ -31,7 +32,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/LOGO1.png",
+          "image": "./assets/images/Logo.png",
           "imageWidth": 240,
           "resizeMode": "contain",
           "backgroundColor": "#1A1C1E",
@@ -42,7 +43,9 @@
       ],
       "expo-audio",
       "expo-asset",
-      "expo-web-browser"
+      "expo-web-browser",
+      "expo-font",
+      "expo-image"
     ],
     "experiments": {
       "typedRoutes": true,

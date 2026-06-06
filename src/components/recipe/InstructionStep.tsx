@@ -172,6 +172,22 @@ export default function InstructionStep({
   );
 }
 
+export function ReadOnlyInstructionStep({ step, text }: { step: number; text: string }) {
+  return (
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <View style={styles.headerLeft}>
+          <View style={styles.stepBadge}>
+            <Text style={styles.stepText}>{step}</Text>
+          </View>
+          <Text style={styles.title}>Step {step}</Text>
+        </View>
+      </View>
+      <Text style={[styles.instructionText, { marginBottom: 0 }]}>{text}</Text>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   container: {
     backgroundColor: COLORS.card,
