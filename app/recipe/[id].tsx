@@ -88,7 +88,10 @@ export default function RecipeDetailScreen() {
             style={styles.heroImage}
             contentFit="cover"
           />
-          <View style={[styles.heroGradient, { backgroundColor: "rgba(13,13,15,0.5)" }]} />
+          <LinearGradient
+            colors={["rgba(13,13,15,0.15)", "rgba(13,13,15,0.85)"]}
+            style={styles.heroGradient}
+          />
 
           {/* Top buttons */}
           <Pressable style={[styles.backButton, { top: insets.top + SPACING.s }]} onPress={() => router.back()}>
