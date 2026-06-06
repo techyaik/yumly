@@ -171,43 +171,43 @@ export default function RecipeDetailScreen() {
             style={[styles.infoBar, { backgroundColor: colors.card, borderColor: colors.border }]}
           >
             <View style={styles.infoItem}>
-              <View style={styles.infoIconWrap}>
+              <View style={[styles.infoIconWrap, { backgroundColor: colors.elevated }]}>
                 <Ionicons name="time-outline" size={18} color={colors.primary} />
               </View>
               <View>
-                <Text style={styles.infoValue}>
+                <Text style={[styles.infoValue, { color: colors.text }]}>
                   {recipe.metadata.prepTimeMinutes}m
                 </Text>
-                <Text style={styles.infoLabel}>Prep</Text>
+                <Text style={[styles.infoLabel, { color: colors.textMuted }]}>Prep</Text>
               </View>
             </View>
             <View style={styles.infoDivider} />
             <View style={styles.infoItem}>
-              <View style={styles.infoIconWrap}>
+              <View style={[styles.infoIconWrap, { backgroundColor: colors.elevated }]}>
                 <Ionicons name="flame-outline" size={18} color={colors.accentWarm} />
               </View>
               <View>
-                <Text style={styles.infoValue}>
+                <Text style={[styles.infoValue, { color: colors.text }]}>
                   {recipe.metadata.calories}
                 </Text>
-                <Text style={styles.infoLabel}>Calories</Text>
+                <Text style={[styles.infoLabel, { color: colors.textMuted }]}>Calories</Text>
               </View>
             </View>
             <View style={styles.infoDivider} />
             <View style={styles.infoItem}>
-              <View style={styles.infoIconWrap}>
+              <View style={[styles.infoIconWrap, { backgroundColor: colors.elevated }]}>
                 <Ionicons name="people-outline" size={18} color={colors.secondary} />
               </View>
               <View>
-                <Text style={styles.infoValue}>
+                <Text style={[styles.infoValue, { color: colors.text }]}>
                   {recipe.metadata.servings}
                 </Text>
-                <Text style={styles.infoLabel}>Servings</Text>
+                <Text style={[styles.infoLabel, { color: colors.textMuted }]}>Servings</Text>
               </View>
             </View>
             <View style={styles.infoDivider} />
             <View style={styles.infoItem}>
-              <View style={styles.infoIconWrap}>
+              <View style={[styles.infoIconWrap, { backgroundColor: colors.elevated }]}>
                 <Ionicons
                   name="stats-chart-outline"
                   size={18}
@@ -215,10 +215,10 @@ export default function RecipeDetailScreen() {
                 />
               </View>
               <View>
-                <Text style={styles.infoValue}>
+                <Text style={[styles.infoValue, { color: colors.text }]}>
                   {recipe.metadata.difficulty}
                 </Text>
-                <Text style={styles.infoLabel}>Level</Text>
+                <Text style={[styles.infoLabel, { color: colors.textMuted }]}>Level</Text>
               </View>
             </View>
           </View>
@@ -237,13 +237,13 @@ export default function RecipeDetailScreen() {
             >
               <View style={styles.instructionsHeaderLeft}>
                 <Text style={[styles.sectionTitle, { color: colors.text }]}>Instructions</Text>
-                <View style={styles.stepCountBadge}>
-                  <Text style={styles.stepCountText}>
+                <View style={[styles.stepCountBadge, { backgroundColor: colors.primaryLight, borderColor: colors.borderAccent }]}>
+                  <Text style={[styles.stepCountText, { color: colors.primary }]}>
                     {recipe.instructions.length} steps
                   </Text>
                 </View>
               </View>
-              <View style={styles.expandBtn}>
+              <View style={[styles.expandBtn, { backgroundColor: colors.elevated, borderColor: colors.border }]}>
                 <Ionicons
                   name={instructionsExpanded ? "chevron-up" : "chevron-down"}
                   size={18}
@@ -272,54 +272,54 @@ export default function RecipeDetailScreen() {
       >
         <View style={styles.modalOverlay}>
           <View
-            style={styles.modalContent}
+            style={[styles.modalContent, { backgroundColor: colors.card, borderColor: colors.border }]}
           >
             {/* Handle bar */}
-            <View style={styles.modalHandle} />
+            <View style={[styles.modalHandle, { backgroundColor: colors.bg3 }]} />
 
             <View style={styles.modalHeader}>
               <View>
-                <Text style={styles.modalLabel}>PORTION SIZE</Text>
-                <Text style={styles.modalTitle}>Choose Proportion</Text>
+                <Text style={[styles.modalLabel, { color: colors.primary }]}>PORTION SIZE</Text>
+                <Text style={[styles.modalTitle, { color: colors.text }]}>Choose Proportion</Text>
               </View>
               <Pressable
-                style={styles.modalCloseBtn}
+                style={[styles.modalCloseBtn, { backgroundColor: colors.elevated, borderColor: colors.border }]}
                 onPress={() => setModalVisible(false)}
               >
                 <Ionicons name="close" size={20} color={colors.textMuted} />
               </Pressable>
             </View>
 
-            <Text style={styles.modalSubtitle}>
+            <Text style={[styles.modalSubtitle, { color: colors.textSecondary }]}>
               How many people are you cooking for?
             </Text>
 
             <View style={styles.servingsPicker}>
               <Pressable
                 onPress={() => setServings(Math.max(1, servings - 1))}
-                style={styles.pickerBtn}
+                style={[styles.pickerBtn, { backgroundColor: colors.elevated, borderColor: colors.border }]}
               >
                 <Ionicons name="remove" size={24} color={colors.primary} />
               </Pressable>
 
               <View style={styles.servingsCountContainer}>
-                <Text style={styles.servingsNumber}>{servings}</Text>
-                <Text style={styles.servingsLabel}>
+                <Text style={[styles.servingsNumber, { color: colors.text }]}>{servings}</Text>
+                <Text style={[styles.servingsLabel, { color: colors.textMuted }]}>
                   {servings === 1 ? "Person" : "People"}
                 </Text>
               </View>
 
               <Pressable
                 onPress={() => setServings(servings + 1)}
-                style={styles.pickerBtn}
+                style={[styles.pickerBtn, { backgroundColor: colors.elevated, borderColor: colors.border }]}
               >
                 <Ionicons name="add" size={24} color={colors.primary} />
               </Pressable>
             </View>
 
-            <View style={styles.proportionBox}>
+            <View style={[styles.proportionBox, { backgroundColor: colors.primaryLight, borderColor: colors.borderAccent }]}>
               <Ionicons name="information-circle-outline" size={16} color={colors.primary} />
-              <Text style={styles.proportionText}>
+              <Text style={[styles.proportionText, { color: colors.primary }]}>
                 Ingredients adjusted for {servings} people (×
                 {(servings / recipe.metadata.servings).toFixed(1)})
               </Text>
@@ -327,11 +327,11 @@ export default function RecipeDetailScreen() {
 
             <View style={styles.modalActions}>
               <Pressable
-                style={styles.planBtn}
+                style={[styles.planBtn, { backgroundColor: colors.elevated, borderColor: colors.border }]}
                 onPress={() => handleAddToPlan(false)}
               >
                 <Ionicons name="calendar-outline" size={18} color={colors.text} />
-                <Text style={styles.planBtnText}>Add to Plan</Text>
+                <Text style={[styles.planBtnText, { color: colors.text }]}>Add to Plan</Text>
               </Pressable>
 
               <Pressable
